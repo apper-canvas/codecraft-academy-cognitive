@@ -376,9 +376,8 @@ const Courses = () => {
                       </motion.button>
                     </div>
                   </div>
-                  </motion.div>
-                );
-              ))}
+                </motion.div>
+              )})}
             </div>
           </AnimatePresence>
 
