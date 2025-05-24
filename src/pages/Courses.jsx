@@ -269,17 +269,17 @@ const Courses = () => {
                 ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3' 
                 : 'grid-cols-1'
             }`}>
+              {filteredCourses.map((course, index) => {
                 const courseRating = getCourseRating(course.id);
                 
                 return (
-                return (
                 <motion.div
-                  key={course.id}
-                  layout
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                    key={course.id}
+                    layout
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                    transition={{ duration: 0.5, delay: index * 0.1 }}
                   className="group bg-white dark:bg-surface-800 rounded-2xl shadow-card hover:shadow-soft transition-all duration-300 overflow-hidden"
                   whileHover={{ y: -5 }}
                 >
@@ -375,17 +375,14 @@ const Courses = () => {
                         Enroll Now
                       </motion.button>
                     </div>
-                )
-                );
-              })}
+                  </div>
                 </motion.div>
+                )
+              })}
+            </div>
               ))}
             </div>
           </AnimatePresence>
-
-          {filteredCourses.length === 0 && (
-            <motion.div
-              initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               className="text-center py-12"
             >
