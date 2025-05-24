@@ -6,9 +6,9 @@ import ApperIcon from '../components/ApperIcon'
 
 const Home = () => {
   const [darkMode, setDarkMode] = useState(false)
+  const navigate = useNavigate()
 
   const toggleDarkMode = () => {
-    const navigate = useNavigate()
     setDarkMode(!darkMode)
     document.documentElement.classList.toggle('dark')
   }
@@ -47,10 +47,6 @@ const Home = () => {
   ]
 
   return (
-  const navigate = useNavigate()
-
-  const toggleDarkMode = () => {
-    setDarkMode(!darkMode)
     <div className={`min-h-screen transition-colors duration-300 ${darkMode ? 'dark' : ''}`}>
       {/* Header */}
       <header className="relative z-10 px-4 py-6 sm:px-6 lg:px-8">
@@ -137,20 +133,6 @@ const Home = () => {
                     <ApperIcon name={course.icon} className="h-8 w-8 mb-2" />
                     <h3 className="font-semibold text-lg">{course.title}</h3>
                   </div>
-              <motion.div
-                key={course.id}
-                className="group relative overflow-hidden rounded-2xl bg-white dark:bg-surface-800 shadow-card hover:shadow-soft transition-all duration-300"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-                whileHover={{ y: -5 }}
-              >
-                <div className={`h-32 bg-gradient-to-br ${course.color} relative`}>
-                  <div className="absolute inset-0 bg-black/20"></div>
-                  <div className="absolute bottom-4 left-4 text-white">
-                    <ApperIcon name={course.icon} className="h-8 w-8 mb-2" />
-                    <h3 className="font-semibold text-lg">{course.title}</h3>
-                  </div>
                 </div>
                 
                 <div className="p-6">
@@ -186,7 +168,6 @@ const Home = () => {
           </div>
         </div>
       </section>
-        </div>
 
       {/* Main Interactive Feature */}
       <MainFeature />
