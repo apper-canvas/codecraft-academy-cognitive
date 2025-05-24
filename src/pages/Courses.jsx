@@ -269,9 +269,9 @@ const Courses = () => {
                 ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3' 
                 : 'grid-cols-1'
             }`}>
-              {filteredCourses.map((course, index) => (
-                const courseRating = getCourseRating(course.id)
+                const courseRating = getCourseRating(course.id);
                 
+                return (
                 return (
                 <motion.div
                   key={course.id}
@@ -375,8 +375,9 @@ const Courses = () => {
                         Enroll Now
                       </motion.button>
                     </div>
-                  </div>
                 )
+                );
+              })}
                 </motion.div>
               ))}
             </div>
