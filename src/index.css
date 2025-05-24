@@ -14,11 +14,11 @@
 
 @layer base {
   * {
-    @apply border-border;
+    @apply border-surface-200 dark:border-surface-700;
   }
   
   body {
-    @apply bg-background text-foreground font-sans;
+    @apply bg-surface-50 text-surface-900 dark:bg-surface-900 dark:text-surface-100 font-sans;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
   
