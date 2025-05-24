@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
+import { useNavigate } from 'react-router-dom'
 import MainFeature from '../components/MainFeature'
 import ApperIcon from '../components/ApperIcon'
 
@@ -7,6 +8,7 @@ const Home = () => {
   const [darkMode, setDarkMode] = useState(false)
 
   const toggleDarkMode = () => {
+    const navigate = useNavigate()
     setDarkMode(!darkMode)
     document.documentElement.classList.toggle('dark')
   }
@@ -45,6 +47,10 @@ const Home = () => {
   ]
 
   return (
+  const navigate = useNavigate()
+
+  const toggleDarkMode = () => {
+    setDarkMode(!darkMode)
     <div className={`min-h-screen transition-colors duration-300 ${darkMode ? 'dark' : ''}`}>
       {/* Header */}
       <header className="relative z-10 px-4 py-6 sm:px-6 lg:px-8">
@@ -63,6 +69,15 @@ const Home = () => {
                 CodeCraft Academy
               </h1>
             </motion.div>
+            
+            <div className="hidden md:flex items-center space-x-6">
+              <button
+                onClick={() => navigate('/courses')}
+                className="text-surface-600 dark:text-surface-300 hover:text-primary transition-colors font-medium"
+              >
+                Courses
+              </button>
+            </div>
             
             <motion.button
               onClick={toggleDarkMode}
@@ -106,7 +121,22 @@ const Home = () => {
 
           {/* Featured Courses Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
-            {courses.map((course, index) => (
+            {courses.slice(0, 3).map((course, index) => (
+              <motion.div
+                key={course.id}
+                className="group relative overflow-hidden rounded-2xl bg-white dark:bg-surface-800 shadow-card hover:shadow-soft transition-all duration-300 cursor-pointer"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: index * 0.1 }}
+                whileHover={{ y: -5 }}
+                onClick={() => navigate(`/course/${course.id}`)}
+              >
+                <div className={`h-32 bg-gradient-to-br ${course.color} relative`}>
+                  <div className="absolute inset-0 bg-black/20"></div>
+                  <div className="absolute bottom-4 left-4 text-white">
+                    <ApperIcon name={course.icon} className="h-8 w-8 mb-2" />
+                    <h3 className="font-semibold text-lg">{course.title}</h3>
+                  </div>
               <motion.div
                 key={course.id}
                 className="group relative overflow-hidden rounded-2xl bg-white dark:bg-surface-800 shadow-card hover:shadow-soft transition-all duration-300"
@@ -142,8 +172,21 @@ const Home = () => {
               </motion.div>
             ))}
           </div>
+
+          {/* View All Courses Button */}
+          <div className="text-center mb-16">
+            <motion.button
+              onClick={() => navigate('/courses')}
+              className="px-8 py-4 bg-gradient-to-r from-primary to-secondary text-white font-medium rounded-xl hover:shadow-soft transition-all duration-300"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              View All Courses
+            </motion.button>
+          </div>
         </div>
       </section>
+        </div>
 
       {/* Main Interactive Feature */}
       <MainFeature />
