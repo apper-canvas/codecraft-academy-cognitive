@@ -280,8 +280,8 @@ const Courses = () => {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -20 }}
                     transition={{ duration: 0.5, delay: index * 0.1 }}
+                    whileHover={{ y: -5 }}
                     className="group bg-white dark:bg-surface-800 rounded-2xl shadow-card hover:shadow-soft transition-all duration-300 overflow-hidden"
-                  whileHover={{ y: -5 }}
                   >
                   {/* Course Image/Header */}
                   <div className={`h-48 bg-gradient-to-br ${course.color} relative overflow-hidden`}>
