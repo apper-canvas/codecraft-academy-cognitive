@@ -4,6 +4,21 @@ import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import ApperIcon from '../components/ApperIcon'
 
+// Helper function to get course ratings from localStorage
+const getCourseRating = (courseId) => {
+  const reviews = localStorage.getItem(`reviews_${courseId}`)
+  if (!reviews) return { average: 0, count: 0 }
+  
+  const parsedReviews = JSON.parse(reviews)
+  if (parsedReviews.length === 0) return { average: 0, count: 0 }
+  
+  const total = parsedReviews.reduce((sum, review) => sum + review.rating, 0)
+  return {
+    average: (total / parsedReviews.length),
+    count: parsedReviews.length
+  }
+}
+
 const Courses = () => {
   const navigate = useNavigate()
   const [searchTerm, setSearchTerm] = useState('')
@@ -21,7 +36,6 @@ const Courses = () => {
       modules: 12,
       duration: "6 weeks",
       students: 2400,
-      rating: 4.8,
       instructor: "Sarah Johnson",
       price: 49.99,
       icon: "Zap",
@@ -38,7 +52,6 @@ const Courses = () => {
       modules: 15,
       duration: "8 weeks",
       students: 1800,
-      rating: 4.9,
       instructor: "Dr. Mike Chen",
       price: 79.99,
       icon: "BarChart3",
@@ -55,7 +68,6 @@ const Courses = () => {
       modules: 20,
       duration: "10 weeks",
       students: 3200,
-      rating: 4.7,
       instructor: "Alex Rodriguez",
       price: 99.99,
       icon: "Atom",
@@ -72,7 +84,6 @@ const Courses = () => {
       modules: 16,
       duration: "7 weeks",
       students: 1500,
-      rating: 4.6,
       instructor: "Emma Wilson",
       price: 69.99,
       icon: "Server",
@@ -89,7 +100,6 @@ const Courses = () => {
       modules: 22,
       duration: "12 weeks",
       students: 980,
-      rating: 4.9,
       instructor: "Dr. Lisa Park",
       price: 129.99,
       icon: "Brain",
@@ -106,7 +116,6 @@ const Courses = () => {
       modules: 10,
       duration: "5 weeks",
       students: 2100,
-      rating: 4.5,
       instructor: "Tom Bradley",
       price: 39.99,
       icon: "Palette",
@@ -136,6 +145,29 @@ const Courses = () => {
 
   const handleViewCourse = (course) => {
     navigate(`/course/${course.id}`)
+  }
+
+  const StarRating = ({ rating, count, size = 'sm' }) => {
+    const sizeClasses = size === 'sm' ? 'h-4 w-4' : 'h-5 w-5'
+    
+    return (
+      <div className="flex items-center space-x-1">
+        {[1, 2, 3, 4, 5].map((star) => (
+          <ApperIcon 
+            key={star}
+            name="Star" 
+            className={`${sizeClasses} ${
+              star <= Math.round(rating) 
+                ? 'text-yellow-400 fill-current' 
+                : 'text-surface-300 dark:text-surface-600'
+            }`} 
+          />
+        ))}
+        <span className="text-sm text-surface-600 dark:text-surface-300 ml-1">
+          {rating > 0 ? rating.toFixed(1) : 'No ratings'} {count > 0 && `(${count})`}
+        </span>
+      </div>
+    )
   }
 
   return (
@@ -238,6 +270,9 @@ const Courses = () => {
                 : 'grid-cols-1'
             }`}>
               {filteredCourses.map((course, index) => (
+                const courseRating = getCourseRating(course.id)
+                
+                return (
                 <motion.div
                   key={course.id}
                   layout
@@ -257,9 +292,13 @@ const Courses = () => {
                       </div>
                     </div>
                     <div className="absolute top-4 right-4">
-                      <div className="flex items-center space-x-1 bg-black/30 backdrop-blur-sm px-2 py-1 rounded-lg">
-                        <ApperIcon name="Star" className="h-4 w-4 text-yellow-400 fill-current" />
-                        <span className="text-white text-sm font-medium">{course.rating}</span>
+                      <div className="bg-black/30 backdrop-blur-sm px-2 py-1 rounded-lg">
+                        <div className="flex items-center space-x-1">
+                          <ApperIcon name="Star" className="h-4 w-4 text-yellow-400 fill-current" />
+                          <span className="text-white text-sm font-medium">
+                            {courseRating.average > 0 ? courseRating.average.toFixed(1) : 'New'}
+                          </span>
+                        </div>
                       </div>
                     </div>
                     <div className="absolute bottom-4 left-4 right-4">
@@ -270,6 +309,11 @@ const Courses = () => {
 
                   {/* Course Content */}
                   <div className="p-6">
+                    {/* Rating Display */}
+                    <div className="mb-3">
+                      <StarRating rating={courseRating.average} count={courseRating.count} />
+                    </div>
+                    
                     <div className="flex items-center justify-between mb-3">
                       <span className={`px-3 py-1 text-xs font-medium rounded-full ${
                         course.difficulty === 'Beginner' ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400' :
@@ -332,6 +376,7 @@ const Courses = () => {
                       </motion.button>
                     </div>
                   </div>
+                )
                 </motion.div>
               ))}
             </div>

@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { toast } from 'react-toastify'
 import VideoPlayer from '../components/VideoPlayer'
 import ApperIcon from '../components/ApperIcon'
+import RatingSystem from '../components/RatingSystem'
 
 const CourseDetail = () => {
   const { id } = useParams()
@@ -11,6 +12,18 @@ const CourseDetail = () => {
   const [currentModule, setCurrentModule] = useState(0)
   const [progress, setProgress] = useState({})
   const [isEnrolled, setIsEnrolled] = useState(false)
+
+  // Helper function to get course ratings
+  const getCourseRating = () => {
+    const reviews = localStorage.getItem(`reviews_${id}`)
+    if (!reviews) return { average: 0, count: 0 }
+    
+    const parsedReviews = JSON.parse(reviews)
+    if (parsedReviews.length === 0) return { average: 0, count: 0 }
+    
+    const total = parsedReviews.reduce((sum, review) => sum + review.rating, 0)
+    return { average: (total / parsedReviews.length), count: parsedReviews.length }
+  }
 
   // Mock course data - in real app this would come from API
   const courseData = {
@@ -145,6 +158,8 @@ const CourseDetail = () => {
   const completedModules = Object.keys(progress).filter(id => progress[id].completed).length
   const progressPercentage = (completedModules / course.modules.length) * 100
 
+  const courseRating = getCourseRating()
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-surface-50 via-purple-50 to-cyan-50 dark:from-surface-900 dark:via-purple-900/20 dark:to-cyan-900/20">
       <div className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
@@ -171,12 +186,33 @@ const CourseDetail = () => {
                 <p className="text-surface-600 dark:text-surface-300 mb-3">
                   {course.description}
                 </p>
-                <div className="flex items-center space-x-4 text-sm text-surface-500 dark:text-surface-400">
+                <div className="flex items-center space-x-4 text-sm text-surface-500 dark:text-surface-400 mb-3">
                   <span>Instructor: {course.instructor}</span>
                   <span>•</span>
                   <span>{course.difficulty}</span>
                   <span>•</span>
                   <span>{course.duration}</span>
+                </div>
+                
+                {/* Course Rating Display */}
+                <div className="flex items-center space-x-2">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <ApperIcon 
+                      key={star}
+                      name="Star" 
+                      className={`h-5 w-5 ${
+                        star <= Math.round(courseRating.average) 
+                          ? 'text-yellow-400 fill-current' 
+                          : 'text-surface-300 dark:text-surface-600'
+                      }`} 
+                    />
+                  ))}
+                  <span className="text-surface-600 dark:text-surface-300 font-medium">
+                    {courseRating.average > 0 
+                      ? `${courseRating.average.toFixed(1)} (${courseRating.count} reviews)` 
+                      : 'No ratings yet'
+                    }
+                  </span>
                 </div>
               </div>
               
@@ -207,7 +243,8 @@ const CourseDetail = () => {
         </motion.div>
 
         {isEnrolled ? (
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+          <div className="space-y-8">
+            <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
             {/* Module Sidebar */}
             <motion.div
               initial={{ opacity: 0, x: -20 }}
@@ -285,6 +322,16 @@ const CourseDetail = () => {
                   className="aspect-video"
                 />
               </div>
+            </motion.div>
+          </div>
+          
+            {/* Rating System */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4 }}
+            >
+              <RatingSystem courseId={id} courseName={course.title} />
             </motion.div>
           </div>
         ) : (
