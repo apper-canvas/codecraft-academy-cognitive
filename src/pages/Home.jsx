@@ -73,6 +73,19 @@ const Home = () => {
               >
                 Courses
               </button>
+              <button
+                onClick={() => navigate('/quiz')}
+                className="text-surface-600 dark:text-surface-300 hover:text-primary transition-colors font-medium"
+              >
+                Quiz
+              </button>
+              <button
+                onClick={() => navigate('/snippets')}
+                className="text-surface-600 dark:text-surface-300 hover:text-primary transition-colors font-medium"
+              >
+                Snippets
+              </button>
+
             </div>
             
             <motion.button

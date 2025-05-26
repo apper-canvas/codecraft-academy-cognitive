@@ -6,6 +6,8 @@ import NotFound from './pages/NotFound'
 import Courses from './pages/Courses'
 import CourseDetail from './pages/CourseDetail'
 import SnippetLibrary from './pages/SnippetLibrary'
+import Quiz from './pages/Quiz'
+
 
 function App() {
   return (
@@ -15,6 +17,8 @@ function App() {
         <Route path="*" element={<NotFound />} />
         <Route path="/courses" element={<Courses />} />
         <Route path="/course/:id" element={<CourseDetail />} />
+        <Route path="/quiz" element={<Quiz />} />
+
         <Route path="/snippets" element={<SnippetLibrary />} />
       </Routes>
       

@@ -11,12 +11,6 @@ const MainFeature = () => {
   const [code, setCode] = useState('')
   const [output, setOutput] = useState('')
   const [isRunning, setIsRunning] = useState(false)
-  const [currentQuiz, setCurrentQuiz] = useState(0)
-  const [selectedAnswer, setSelectedAnswer] = useState(null)
-  const [showResults, setShowResults] = useState(false)
-  const [showSaveModal, setShowSaveModal] = useState(false)
-  const [score, setScore] = useState(0)
-
   const languages = [
     {
       id: 'javascript',
@@ -41,182 +35,7 @@ const MainFeature = () => {
     }
   ]
 
-  const quizLevels = {
-    beginner: {
-      name: 'Beginner',
-      color: 'from-green-400 to-green-600',
-      description: 'Basic programming concepts',
-      questions: [
-        {
-          question: "What is the correct way to declare a variable in JavaScript?",
-          options: ["var myVar;", "variable myVar;", "v myVar;", "declare myVar;"],
-          correct: 0
-        },
-        {
-          question: "Which method is used to add an element to the end of an array?",
-          options: ["append()", "add()", "push()", "insert()"],
-          correct: 2
-        },
-        {
-          question: "What does HTML stand for?",
-          options: ["Hyper Text Markup Language", "High Tech Modern Language", "Home Tool Markup Language", "Hyperlink and Text Markup Language"],
-          correct: 0
-        },
-        {
-          question: "Which of these is a primitive data type in JavaScript?",
-          options: ["Array", "Object", "String", "Function"],
-          correct: 2
-        },
-        {
-          question: "What symbol is used for single-line comments in JavaScript?",
-          options: ["#", "//", "/*", "--"],
-          correct: 1
-        },
-        {
-          question: "Which operator is used to compare both value and type in JavaScript?",
-          options: ["==", "===", "!=", "="],
-          correct: 1
-        },
-        {
-          question: "What is the correct way to write a for loop in JavaScript?",
-          options: ["for i = 1 to 5", "for (i = 0; i <= 5; i++)", "for i in range(5)", "for (i <= 5; i++)"],
-          correct: 1
-        },
-        {
-          question: "Which CSS property is used to change the text color?",
-          options: ["text-color", "font-color", "color", "text-style"],
-          correct: 2
-        },
-        {
-          question: "What does CSS stand for?",
-          options: ["Computer Style Sheets", "Cascading Style Sheets", "Creative Style Sheets", "Colorful Style Sheets"],
-          correct: 1
-        },
-        {
-          question: "Which HTML tag is used to create a hyperlink?",
-          options: ["<link>", "<a>", "<href>", "<url>"],
-          correct: 1
-        }
-      ]
-    },
-    intermediate: {
-      name: 'Intermediate',
-      color: 'from-blue-400 to-indigo-600',
-      description: 'Intermediate programming concepts',
-      questions: [
-        {
-          question: "What does the '===' operator do in JavaScript?",
-          options: ["Assignment", "Loose equality", "Strict equality", "Comparison"],
-          correct: 2
-        },
-        {
-          question: "Which of the following is a JavaScript framework?",
-          options: ["Django", "React", "Laravel", "Flask"],
-          correct: 1
-        },
-        {
-          question: "What is the purpose of the 'this' keyword in JavaScript?",
-          options: ["References the current function", "References the global object", "References the current object context", "References the parent object"],
-          correct: 2
-        },
-        {
-          question: "Which method is used to iterate over an array in JavaScript?",
-          options: ["loop()", "forEach()", "iterate()", "cycle()"],
-          correct: 1
-        },
-        {
-          question: "What is the difference between 'let' and 'var' in JavaScript?",
-          options: ["No difference", "let has block scope, var has function scope", "var has block scope, let has function scope", "let is faster than var"],
-          correct: 1
-        },
-        {
-          question: "Which method is used to convert a string to lowercase?",
-          options: ["toLowerCase()", "toLower()", "lowerCase()", "lower()"],
-          correct: 0
-        },
-        {
-          question: "What does DOM stand for?",
-          options: ["Document Object Model", "Data Object Management", "Dynamic Object Model", "Document Oriented Model"],
-          correct: 0
-        },
-        {
-          question: "Which event occurs when the user clicks on an HTML element?",
-          options: ["onchange", "onclick", "onmouseclick", "onpress"],
-          correct: 1
-        },
-        {
-          question: "What is the purpose of JSON in web development?",
-          options: ["Styling web pages", "Data interchange format", "Creating animations", "Database management"],
-          correct: 1
-        },
-        {
-          question: "Which HTTP method is used to retrieve data?",
-          options: ["POST", "PUT", "GET", "DELETE"],
-          correct: 2
-        }
-      ]
-    },
-    advanced: {
-      name: 'Advanced',
-      color: 'from-red-400 to-purple-600',
-      description: 'Advanced programming concepts',
-      questions: [
-        {
-          question: "What is a closure in JavaScript?",
-          options: ["A function that returns another function", "A function that has access to variables in its outer scope", "A function that is immediately invoked", "A function that accepts other functions as parameters"],
-          correct: 1
-        },
-        {
-          question: "Which pattern is commonly used for state management in React?",
-          options: ["Observer Pattern", "Singleton Pattern", "Flux/Redux Pattern", "Factory Pattern"],
-          correct: 2
-        },
-        {
-          question: "What is the time complexity of binary search?",
-          options: ["O(n)", "O(log n)", "O(n²)", "O(1)"],
-          correct: 1
-        },
-        {
-          question: "What is the purpose of debouncing in JavaScript?",
-          options: ["To speed up function execution", "To limit the rate of function execution", "To cache function results", "To handle asynchronous operations"],
-          correct: 1
-        },
-        {
-          question: "What is memoization in programming?",
-          options: ["A debugging technique", "A caching technique to optimize expensive function calls", "A way to handle memory leaks", "A method to compress data"],
-          correct: 1
-        },
-        {
-          question: "Which design pattern ensures a class has only one instance?",
-          options: ["Factory Pattern", "Observer Pattern", "Singleton Pattern", "Strategy Pattern"],
-          correct: 2
-        },
-        {
-          question: "What is the Virtual DOM in React?",
-          options: ["A copy of the real DOM kept in memory", "A faster version of the DOM", "A debugging tool", "A testing framework"],
-          correct: 0
-        },
-        {
-          question: "What is the purpose of code splitting in web applications?",
-          options: ["To organize code better", "To reduce initial bundle size and improve performance", "To enable testing", "To prevent bugs"],
-          correct: 1
-        },
-        {
-          question: "Which testing approach focuses on testing individual units of code?",
-          options: ["Integration testing", "End-to-end testing", "Unit testing", "Performance testing"],
-          correct: 2
-        },
-        {
-          question: "What is the space complexity of merge sort?",
-          options: ["O(1)", "O(log n)", "O(n)", "O(n log n)"],
-          correct: 2
-        }
-      ]
-    }
-  }
 
-  const [currentLevel, setCurrentLevel] = useState('beginner')
-  const [hasStartedQuiz, setHasStartedQuiz] = useState(false)
 
   // Real-time code execution with output capture
   const executeJavaScript = (code) => {
@@ -413,42 +232,6 @@ const MainFeature = () => {
     setHasStartedQuiz(true)
     toast.info(`Starting ${quizLevels[level].name} level quiz!`)
   }
-
-  const handleQuizAnswer = (answerIndex) => {
-    setSelectedAnswer(answerIndex)
-    const currentQuestions = quizLevels[currentLevel].questions
-    const isCorrect = answerIndex === currentQuestions[currentQuiz].correct
-    
-    if (isCorrect) {
-      setScore(score + 1)
-      toast.success("Correct answer!")
-    } else {
-      toast.error("Incorrect answer. Try again!")
-    }
-
-    setTimeout(() => {
-      if (currentQuiz < currentQuestions.length - 1) {
-        setCurrentQuiz(currentQuiz + 1)
-        setSelectedAnswer(null)
-      } else {
-        setShowResults(true)
-        const finalScore = score + (isCorrect ? 1 : 0)
-        const percentage = Math.round((finalScore / currentQuestions.length) * 100)
-        if (percentage >= 80) {
-          toast.success(`Excellent! You completed ${quizLevels[currentLevel].name} level!`)
-        } else if (percentage >= 60) {
-          toast.info(`Good job! You passed ${quizLevels[currentLevel].name} level!`)
-        } else {
-          toast.warning(`Keep practicing! Try ${quizLevels[currentLevel].name} level again.`)
-        }
-      }
-    }, 1500)
-  }
-
-  const resetQuiz = () => {
-    setSelectedAnswer(null)
-    setShowResults(false)
-    setScore(0)
     setHasStartedQuiz(false)
     toast.info("Quiz reset. Select a level to start again!")
   }
@@ -514,12 +297,6 @@ const MainFeature = () => {
   return (
     <section className="py-16 px-4 min-h-screen bg-gradient-to-br from-surface-50 via-white to-surface-100 dark:from-surface-900 dark:via-surface-800 dark:to-surface-900">
       <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <motion.div
-          className="text-center mb-12"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
         >
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-surface-900 dark:text-surface-100 mb-4">
             Interactive Learning Experience
@@ -695,9 +472,6 @@ const MainFeature = () => {
                                 {level.questions.length} questions
                               </p>
                             </div>
-                            <div className={`w-3 h-3 rounded-full bg-gradient-to-r ${level.color} opacity-60 group-hover:opacity-100 transition-opacity`}></div>
-                          </div>
-                        </motion.button>
                       ))}
                     </div>
                   </motion.div>
@@ -859,5 +633,3 @@ const MainFeature = () => {
     </section>
   )
 }
-
-export default MainFeature
