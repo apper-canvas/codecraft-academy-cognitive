@@ -197,7 +197,21 @@ const MainFeature = () => {
                         ? `bg-gradient-to-r ${lang.color} text-white shadow-card`
                         : 'bg-surface-200 dark:bg-surface-600 text-surface-700 dark:text-surface-300 hover:bg-surface-300 dark:hover:bg-surface-500'
                     }`}
+                  >
+                    <ApperIcon name={lang.icon} className="h-4 w-4" />
+                    <span>{lang.name}</span>
+                  </button>
+                ))}
               </div>
+
+              {/* Code Editor */}
+              <div className="relative">
+                <textarea
+                  value={code}
+                  onChange={(e) => setCode(e.target.value)}
+                  className="w-full h-64 p-4 bg-surface-900 text-surface-100 font-mono text-sm resize-none focus:outline-none code-editor"
+                  placeholder="Write your code here..."
+                />
                 <div className="absolute top-2 right-2 flex space-x-2">
                   <button
                     onClick={() => {
@@ -217,12 +231,6 @@ const MainFeature = () => {
                     <ApperIcon name="Bookmark" className="h-4 w-4" />
                   </button>
                 </div>
-                    title="Reset Code"
-                  >
-                    <ApperIcon name="RotateCcw" className="h-4 w-4" />
-                  </button>
-                </div>
-              </div>
 
               {/* Run Button and Output */}
               <div className="p-4 border-t border-surface-200 dark:border-surface-600">
@@ -266,6 +274,58 @@ const MainFeature = () => {
                 )}
               </div>
             </div>
+                              <span className="text-sm">{option}</span>
+                            </div>
+                          </motion.button>
+                        ))}
+                      </div>
+                    </div>
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="text-center space-y-4"
+                  >
+                    <div className="p-6 bg-surface-50 dark:bg-surface-700 rounded-xl">
+                      <h4 className="text-2xl font-bold text-surface-900 dark:text-surface-100 mb-2">
+                        Quiz Complete!
+                      </h4>
+                      <p className="text-lg text-surface-600 dark:text-surface-300">
+                        You scored {score} out of {quizQuestions.length}
+                      </p>
+                      <div className="mt-4">
+                        <div className="text-3xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+                          {Math.round((score / quizQuestions.length) * 100)}%
+                        </div>
+                      </div>
+                    </div>
+
+                    <motion.button
+                      onClick={resetQuiz}
+                      className="px-6 py-3 bg-gradient-to-r from-primary to-secondary text-white font-medium rounded-xl hover:shadow-soft transition-all duration-300"
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      Take Quiz Again
+                    </motion.button>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          </motion.div>
+        </div>
+      </div>
+
+      {showSaveModal && (
+        <SaveSnippetModal
+          isOpen={showSaveModal}
+          onClose={() => setShowSaveModal(false)}
+          onSave={handleSnippetSaved}
+          language={activeLanguage}
+        />
+      )}
+    </section>
           </motion.div>
 
           {/* Quiz Section */}
@@ -297,52 +357,6 @@ const MainFeature = () => {
                   >
                     <div className="flex items-center justify-between">
                       <span className="text-sm font-medium text-surface-600 dark:text-surface-300">
-                        Question {currentQuiz + 1} of {quizQuestions.length}
-                      </span>
-                      <div className="w-24 bg-surface-200 dark:bg-surface-600 rounded-full h-2">
-                        <div
-                          className="bg-gradient-to-r from-primary to-secondary h-2 rounded-full transition-all duration-300"
-                          style={{ width: `${((currentQuiz + 1) / quizQuestions.length) * 100}%` }}
-                        />
-                      </div>
-                    </div>
-
-                    <div className="p-4 bg-surface-50 dark:bg-surface-700 rounded-xl">
-                      <h4 className="text-lg font-medium text-surface-900 dark:text-surface-100 mb-4">
-                        {quizQuestions[currentQuiz].question}
-                      </h4>
-
-                      <div className="space-y-3">
-                        {quizQuestions[currentQuiz].options.map((option, index) => (
-                          <motion.button
-                            key={index}
-                            onClick={() => handleQuizAnswer(index)}
-                            disabled={selectedAnswer !== null}
-                            className={`w-full text-left p-4 rounded-lg transition-all duration-300 ${
-                              selectedAnswer === null
-                                ? 'bg-white dark:bg-surface-600 hover:bg-surface-100 dark:hover:bg-surface-500 border border-surface-200 dark:border-surface-500'
-                                : selectedAnswer === index
-                                ? index === quizQuestions[currentQuiz].correct
-                                  ? 'bg-green-100 border-green-500 text-green-800 dark:bg-green-900/30 dark:text-green-400'
-                                  : 'bg-red-100 border-red-500 text-red-800 dark:bg-red-900/30 dark:text-red-400'
-                                : index === quizQuestions[currentQuiz].correct
-                                ? 'bg-green-100 border-green-500 text-green-800 dark:bg-green-900/30 dark:text-green-400'
-                                : 'bg-surface-200 dark:bg-surface-600 text-surface-500'
-                            }`}
-                            whileHover={selectedAnswer === null ? { scale: 1.02 } : {}}
-                            whileTap={selectedAnswer === null ? { scale: 0.98 } : {}}
-                          >
-                            <div className="flex items-center">
-                              <span className="flex-shrink-0 w-6 h-6 rounded-full border-2 border-current flex items-center justify-center mr-3 text-xs font-bold">
-                                {String.fromCharCode(65 + index)}
-                              </span>
-                      <motion.button
-                        onClick={resetQuiz}
-                        className="px-6 py-3 bg-gradient-to-r from-primary to-secondary text-white font-medium rounded-xl hover:shadow-soft transition-all duration-300"
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                      >
-                        Take Quiz Again
                       </motion.button>
 
         {showSaveModal && (
