@@ -1,6 +1,8 @@
-import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { useState, useCallback } from 'react'
 import { toast } from 'react-toastify'
+import { snippetService } from '../services/snippetService'
+import SaveSnippetModal from './SaveSnippetModal'
 import ApperIcon from './ApperIcon'
 
 const MainFeature = () => {
@@ -11,6 +13,7 @@ const MainFeature = () => {
   const [currentQuiz, setCurrentQuiz] = useState(0)
   const [selectedAnswer, setSelectedAnswer] = useState(null)
   const [showResults, setShowResults] = useState(false)
+  const [showSaveModal, setShowSaveModal] = useState(false)
   const [score, setScore] = useState(0)
 
   const languages = [
@@ -128,6 +131,31 @@ const MainFeature = () => {
 
   const currentLanguage = languages.find(lang => lang.id === activeLanguage)
 
+
+  const handleSaveSnippet = useCallback(() => {
+    if (!code.trim()) {
+      toast.error('Please write some code before saving!')
+      return
+    }
+    setShowSaveModal(true)
+  }, [code])
+
+  const handleSnippetSaved = (snippetData) => {
+    const snippet = {
+      ...snippetData,
+      code,
+      language: activeLanguage,
+      createdAt: new Date().toISOString()
+    }
+    
+    try {
+      snippetService.createSnippet(snippet)
+      toast.success('Snippet saved successfully!')
+      setShowSaveModal(false)
+    } catch (error) {
+      toast.error('Failed to save snippet')
+    }
+  }
   if (!code) {
     setCode(currentLanguage.defaultCode)
   }
@@ -167,7 +195,6 @@ const MainFeature = () => {
                     className={`flex items-center space-x-2 px-4 py-2 rounded-lg font-medium transition-all duration-300 ${
                       activeLanguage === lang.id
                         ? `bg-gradient-to-r ${lang.color} text-white shadow-card`
-                        : 'bg-white dark:bg-surface-600 text-surface-700 dark:text-surface-300 hover:bg-surface-100 dark:hover:bg-surface-500'
                     }`}
                   >
                     <ApperIcon name={lang.icon} className="h-4 w-4" />
@@ -189,6 +216,13 @@ const MainFeature = () => {
                   <button
                     onClick={() => {
                       setCode(currentLanguage.defaultCode)
+                  <button
+                    onClick={handleSaveSnippet}
+                    className="p-2 bg-surface-700 hover:bg-surface-600 text-surface-300 rounded-lg transition-colors"
+                    title="Save Snippet"
+                  >
+                    <ApperIcon name="Bookmark" className="h-4 w-4" />
+                  </button>
                       toast.info("Code reset to default")
                     }}
                     className="p-2 bg-surface-700 hover:bg-surface-600 text-surface-300 rounded-lg transition-colors"
@@ -349,6 +383,15 @@ const MainFeature = () => {
                       whileTap={{ scale: 0.95 }}
                     >
                       Take Quiz Again
+
+        {showSaveModal && (
+          <SaveSnippetModal
+            isOpen={showSaveModal}
+            onClose={() => setShowSaveModal(false)}
+            onSave={handleSnippetSaved}
+            language={activeLanguage}
+          />
+        )}
                     </motion.button>
                   </motion.div>
                 )}

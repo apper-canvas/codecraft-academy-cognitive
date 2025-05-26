@@ -5,6 +5,7 @@ import Home from './pages/Home'
 import NotFound from './pages/NotFound'
 import Courses from './pages/Courses'
 import CourseDetail from './pages/CourseDetail'
+import SnippetLibrary from './pages/SnippetLibrary'
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
         <Route path="*" element={<NotFound />} />
         <Route path="/courses" element={<Courses />} />
         <Route path="/course/:id" element={<CourseDetail />} />
+        <Route path="/snippets" element={<SnippetLibrary />} />
       </Routes>
       
       <ToastContainer
