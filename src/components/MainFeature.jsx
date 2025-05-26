@@ -425,12 +425,3 @@ const MainFeature = () => {
 }
 
 export default MainFeature
-            </div>
-          </motion.div>
-        </div>
-      </div>
-    </section>
-  )
-}
-
-export default MainFeature
