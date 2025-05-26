@@ -1,6 +1,5 @@
 import { motion, AnimatePresence } from 'framer-motion'
 import { useState, useCallback } from 'react'
-import { toast } from 'react-toastify'
 import { snippetService } from '../services/snippetService'
 import SaveSnippetModal from './SaveSnippetModal'
 import ApperIcon from './ApperIcon'
@@ -174,10 +173,6 @@ const MainFeature = () => {
   }
 
   const runCode = () => {
-    if (!code.trim()) {
-      toast.error('Please write some code first!')
-      return
-    }
     
     setIsRunning(true)
     setOutput('')
@@ -202,19 +197,6 @@ const MainFeature = () => {
               success: false,
               output: 'Language not supported for execution'
             }
-        }
-        
-        setOutput(result.output)
-        
-        if (result.success) {
-          toast.success('Code executed successfully!')
-        } else {
-          toast.error('Code execution failed!')
-        }
-      } catch (error) {
-        const errorOutput = `❌ Execution Error: ${error.message}`
-        setOutput(errorOutput)
-        toast.error('Code execution failed!')
       } finally {
         setIsRunning(false)
       }
@@ -222,40 +204,10 @@ const MainFeature = () => {
   }
 
   const handleLanguageChange = (languageId) => {
-    setActiveLanguage(languageId)
-    const newLanguage = languages.find(lang => lang.id === languageId)
-    if (newLanguage) {
-      setCode(newLanguage.defaultCode)
-      setOutput('')
-      toast.info(`Switched to ${newLanguage.name}!`)
-    }
-  }
-
-  const currentLanguage = languages.find(lang => lang.id === activeLanguage)
-
-  const handleSaveSnippet = useCallback(() => {
-    if (!code.trim()) {
-      toast.error('Please write some code before saving!')
-      return
-    }
     setShowSaveModal(true)
   }, [code])
 
   const handleSnippetSaved = (snippetData) => {
-    const snippet = {
-      ...snippetData,
-      code,
-      language: activeLanguage,
-      createdAt: new Date().toISOString()
-    }
-    
-    try {
-      snippetService.createSnippet(snippet)
-      toast.success('Snippet saved successfully!')
-      setShowSaveModal(false)
-    } catch (error) {
-      toast.error('Failed to save snippet')
-    }
   }
 
   if (!code) {
