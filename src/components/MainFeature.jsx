@@ -193,27 +193,49 @@ const MainFeature = () => {
             result = executeReact(code)
             break
           default:
+          default:
             result = {
               success: false,
               output: 'Language not supported for execution'
             }
+            break
+        }
+        
+        setOutput(result.output)
+      } catch (error) {
+        setOutput(`❌ Execution Error: ${error.message}`)
       } finally {
         setIsRunning(false)
       }
     }, 800)
   }
 
-  const handleLanguageChange = (languageId) => {
+  const handleLanguageChange = useCallback((languageId) => {
+    setActiveLanguage(languageId)
+    const currentLanguage = languages.find(lang => lang.id === languageId)
+    if (currentLanguage && currentLanguage.defaultCode) {
+      setCode(currentLanguage.defaultCode)
+    }
+    setOutput('')
+  }
+
+
+  const handleSaveSnippet = () => {
+    if (!code.trim()) {
+      return
+    }
     setShowSaveModal(true)
-  }, [code])
+  }
 
   const handleSnippetSaved = (snippetData) => {
+    setShowSaveModal(false)
   }
+
+  const currentLanguage = languages.find(lang => lang.id === activeLanguage) || languages[0]
 
   if (!code) {
     setCode(currentLanguage.defaultCode)
   }
-
   return (
     <section className="py-16 px-4 min-h-screen bg-gradient-to-br from-surface-50 via-white to-surface-100 dark:from-surface-900 dark:via-surface-800 dark:to-surface-900">
       <div className="max-w-7xl mx-auto">
