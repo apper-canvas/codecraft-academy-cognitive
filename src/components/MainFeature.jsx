@@ -596,6 +596,7 @@ const MainFeature = () => {
                 />
                 </div>
               </div>
+              </div>
 
               {/* Run Button and Output */}
               <div className="p-4 border-t border-surface-200 dark:border-surface-600">
