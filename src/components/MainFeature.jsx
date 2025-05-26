@@ -114,14 +114,13 @@ const MainFeature = () => {
           question: "What is the purpose of debouncing in JavaScript?",
           options: ["To speed up function execution", "To limit the rate of function execution", "To cache function results", "To handle asynchronous operations"],
           correct: 1
-  const [currentLevel, setCurrentLevel] = useState('beginner')
-  const [hasStartedQuiz, setHasStartedQuiz] = useState(false)
-          options: ["Observer Pattern", "Command Pattern", "Composition over Inheritance", "Strategy Pattern"],
-          correct: 2
         }
       ]
     }
   }
+
+  const [currentLevel, setCurrentLevel] = useState('beginner')
+  const [hasStartedQuiz, setHasStartedQuiz] = useState(false)
 
   const handleLanguageChange = (langId) => {
     const language = languages.find(lang => lang.id === langId)
@@ -160,6 +159,12 @@ const MainFeature = () => {
       } catch (error) {
         setOutput('❌ Error: ' + error.message)
         toast.error("Code execution failed!")
+      } finally {
+        setIsRunning(false)
+      }
+    }, 1500)
+  }
+
   const handleLevelSelect = (level) => {
     setCurrentLevel(level)
     setCurrentQuiz(0)
@@ -188,7 +193,8 @@ const MainFeature = () => {
         setSelectedAnswer(null)
       } else {
         setShowResults(true)
-        const percentage = Math.round((score + (isCorrect ? 1 : 0)) / currentQuestions.length * 100)
+        const finalScore = score + (isCorrect ? 1 : 0)
+        const percentage = Math.round((finalScore / currentQuestions.length) * 100)
         if (percentage >= 80) {
           toast.success(`Excellent! You completed ${quizLevels[currentLevel].name} level!`)
         } else if (percentage >= 60) {
@@ -202,43 +208,8 @@ const MainFeature = () => {
 
   const resetQuiz = () => {
     setCurrentQuiz(0)
-    setSelectedAnswer(null)
-    setShowResults(false)
-    setScore(0)
-    setHasStartedQuiz(false)
-    toast.info("Quiz reset. Select a level to start again!")
-  }
-
-  const nextLevel = () => {
-    const levels = Object.keys(quizLevels)
-    const currentIndex = levels.indexOf(currentLevel)
-    if (currentIndex < levels.length - 1) {
-      const nextLevelKey = levels[currentIndex + 1]
-      setCurrentLevel(nextLevelKey)
-      setCurrentQuiz(0)
-  const currentQuestions = quizLevels[currentLevel].questions
-      setShowResults(false)
-      setScore(0)
-      setHasStartedQuiz(true)
-      toast.success(`Advancing to ${quizLevels[nextLevelKey].name} level!`)
-    }
-  }
-        setSelectedAnswer(null)
-      } else {
-        setShowResults(true)
-      }
-    }, 1500)
-  }
-
-  const resetQuiz = () => {
-    setCurrentQuiz(0)
-    setSelectedAnswer(null)
-    setShowResults(false)
-    setScore(0)
-  }
-
   const currentLanguage = languages.find(lang => lang.id === activeLanguage)
-
+  const currentQuestions = quizLevels[currentLevel].questions
 
   const handleSaveSnippet = useCallback(() => {
     if (!code.trim()) {
@@ -264,14 +235,143 @@ const MainFeature = () => {
       toast.error('Failed to save snippet')
     }
   }
+
   if (!code) {
     setCode(currentLanguage.defaultCode)
   }
+    setSelectedAnswer(null)
+    setShowResults(false)
+    setScore(0)
+    setHasStartedQuiz(false)
+    toast.info("Quiz reset. Select a level to start again!")
+  }
 
-  return (
-    <section className="px-4 py-16 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto">
-        <motion.div
+  const nextLevel = () => {
+    const levels = Object.keys(quizLevels)
+    const currentIndex = levels.indexOf(currentLevel)
+    if (currentIndex < levels.length - 1) {
+      const nextLevelKey = levels[currentIndex + 1]
+      setCurrentLevel(nextLevelKey)
+      setCurrentQuiz(0)
+      setSelectedAnswer(null)
+      setShowResults(false)
+      setScore(0)
+      setHasStartedQuiz(true)
+      toast.success(`Advancing to ${quizLevels[nextLevelKey].name} level!`)
+    }
+  }
+                      ? 'opacity-50 cursor-not-allowed'
+                      : 'hover:shadow-soft transform hover:scale-105'
+                  } bg-gradient-to-r ${currentLanguage.color} text-white`}
+                  whileHover={!isRunning ? { scale: 1.05 } : {}}
+                  whileTap={!isRunning ? { scale: 0.95 } : {}}
+                >
+                  <ApperIcon 
+                    name={isRunning ? "Loader2" : "Play"} 
+                    className={`h-5 w-5 ${isRunning ? 'animate-spin' : ''}`} 
+                  />
+                  <span>{isRunning ? "Running..." : "Run Code"}</span>
+                </motion.button>
+
+                {output && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    className="mt-4 p-4 bg-surface-900 text-green-400 rounded-lg font-mono text-sm whitespace-pre-wrap"
+                  >
+                    {output}
+                  </motion.div>
+                )}
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Quiz Section */}
+          <motion.div
+            className="space-y-6"
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6, delay: 0.4 }}
+          >
+            <div className="bg-white dark:bg-surface-800 rounded-2xl shadow-card p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-xl font-bold text-surface-900 dark:text-surface-100">
+                  Coding Quiz
+                </h3>
+                {hasStartedQuiz && (
+                  <div className="flex items-center space-x-2 text-sm text-surface-600 dark:text-surface-300">
+                    <ApperIcon name="Target" className="h-4 w-4" />
+                    <span>{quizLevels[currentLevel].name}: {score}/{currentQuestions.length}</span>
+                  </div>
+                )}
+              </div>
+
+              <AnimatePresence mode="wait">
+                {!hasStartedQuiz ? (
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                    className="space-y-6"
+                  >
+                    <div className="text-center mb-6">
+                      <h4 className="text-lg font-semibold text-surface-900 dark:text-surface-100 mb-2">
+                        Choose Your Level
+                      </h4>
+                      <p className="text-surface-600 dark:text-surface-300">
+                        Select a difficulty level to start the quiz
+                      </p>
+                    </div>
+                    
+                    <div className="grid gap-4">
+                      {Object.entries(quizLevels).map(([levelKey, level]) => (
+                        <motion.button
+                          key={levelKey}
+                          onClick={() => handleLevelSelect(levelKey)}
+                          className={`p-4 rounded-xl border-2 border-surface-200 dark:border-surface-600 hover:border-primary transition-all duration-300 text-left group`}
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
+                        >
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <h5 className={`font-semibold bg-gradient-to-r ${level.color} bg-clip-text text-transparent`}>
+                                {level.name}
+                              </h5>
+                              <p className="text-sm text-surface-600 dark:text-surface-300 mt-1">
+                                {level.description}
+                              </p>
+                              <p className="text-xs text-surface-500 dark:text-surface-400 mt-1">
+                                {level.questions.length} questions
+                              </p>
+                            </div>
+                            <div className={`w-3 h-3 rounded-full bg-gradient-to-r ${level.color} opacity-60 group-hover:opacity-100 transition-opacity`}></div>
+                          </div>
+                        </motion.button>
+                      ))}
+                    </div>
+                  </motion.div>
+                ) : showResults ? (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="text-center space-y-6"
+                  >
+                    <div className="p-6 bg-surface-50 dark:bg-surface-700 rounded-xl">
+                      <div className={`inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-r ${quizLevels[currentLevel].color} mb-4`}>
+                        <ApperIcon name="Trophy" className="h-8 w-8 text-white" />
+                      </div>
+                      <h4 className="text-2xl font-bold text-surface-900 dark:text-surface-100 mb-2">
+                        {quizLevels[currentLevel].name} Complete!
+                      </h4>
+                      <p className="text-lg text-surface-600 dark:text-surface-300">
+                        You scored {score} out of {currentQuestions.length}
+                      </p>
+                      <div className={`text-3xl font-bold bg-gradient-to-r ${quizLevels[currentLevel].color} bg-clip-text text-transparent mt-2`}>
+                        {Math.round((score / currentQuestions.length) * 100)}%
+                      </div>
+                    </div>
+
+                    <div className="flex flex-col sm:flex-row gap-3 justify-center">
           className="text-center mb-12"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
