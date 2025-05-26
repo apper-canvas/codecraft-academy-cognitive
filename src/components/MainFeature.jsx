@@ -193,7 +193,6 @@ const MainFeature = () => {
             result = executeReact(code)
             break
           default:
-          default:
             result = {
               success: false,
               output: 'Language not supported for execution'
