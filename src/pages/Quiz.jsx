@@ -1,6 +1,5 @@
 import { motion, AnimatePresence } from 'framer-motion'
 import { useState } from 'react'
-import { toast } from 'react-toastify'
 import { useNavigate } from 'react-router-dom'
 import ApperIcon from '../components/ApperIcon'
 
@@ -193,7 +192,6 @@ const Quiz = () => {
     setSelectedAnswer(null)
     setShowResults(false)
     setScore(0)
-    setHasStartedQuiz(true)
     toast.info(`Starting ${quizLevels[level].name} level quiz!`)
   }
 
@@ -203,33 +201,18 @@ const Quiz = () => {
     const isCorrect = answerIndex === currentQuestions[currentQuiz].correct
     
     if (isCorrect) {
-      setScore(score + 1)
-      toast.success("Correct answer!")
-    } else {
-      toast.error("Incorrect answer. Try again!")
     }
 
     setTimeout(() => {
       if (currentQuiz < currentQuestions.length - 1) {
         setCurrentQuiz(currentQuiz + 1)
         setSelectedAnswer(null)
-      } else {
-        setShowResults(true)
-        const finalScore = score + (isCorrect ? 1 : 0)
-        const percentage = Math.round((finalScore / currentQuestions.length) * 100)
-        if (percentage >= 80) {
-          toast.success(`Excellent! You completed ${quizLevels[currentLevel].name} level!`)
-        } else if (percentage >= 60) {
-          toast.info(`Good job! You passed ${quizLevels[currentLevel].name} level!`)
-        } else {
-          toast.warning(`Keep practicing! Try ${quizLevels[currentLevel].name} level again.`)
         }
       }
     }, 1500)
   }
 
   const resetQuiz = () => {
-    setSelectedAnswer(null)
     setShowResults(false)
     setScore(0)
     setHasStartedQuiz(false)
@@ -243,7 +226,6 @@ const Quiz = () => {
       const nextLevelKey = levels[currentIndex + 1]
       setCurrentLevel(nextLevelKey)
       setCurrentQuiz(0)
-      setSelectedAnswer(null)
       setShowResults(false)
       setScore(0)
       setHasStartedQuiz(true)
@@ -421,7 +403,6 @@ const Quiz = () => {
                       <motion.button
                         onClick={() => {
                           setCurrentQuiz(0)
-                          setSelectedAnswer(null)
                           setShowResults(false)
                           setScore(0)
                           setHasStartedQuiz(true)
