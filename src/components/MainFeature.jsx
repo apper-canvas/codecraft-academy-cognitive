@@ -217,6 +217,8 @@ const MainFeature = () => {
     }
     setOutput('')
   }
+  }, [])
+
 
 
   const handleSaveSnippet = () => {
