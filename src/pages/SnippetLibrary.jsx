@@ -45,11 +45,13 @@ const SnippetLibrary = () => {
       setLoading(true)
       const data = await snippetService.getAllSnippets()
       setSnippets(data)
-      toast.error('Failed to load snippets')
+    } catch (error) {
+      console.error('Failed to load snippets:', error)
     } finally {
       setLoading(false)
     }
   }
+
 
   const filteredAndSortedSnippets = useMemo(() => {
     let filtered = snippets
@@ -109,11 +111,13 @@ const SnippetLibrary = () => {
         ...snippetData,
         createdAt: new Date().toISOString()
       })
+      setSnippets(prev => [newSnippet, ...prev])
       setShowCreateModal(false)
     } catch (error) {
-      toast.error('Failed to create snippet')
+      console.error('Failed to create snippet:', error)
     }
   }
+
 
   const handleEditSnippet = (snippetData) => {
     try {
@@ -121,38 +125,44 @@ const SnippetLibrary = () => {
         ...snippetData,
         updatedAt: new Date().toISOString()
       })
+      setSnippets(prev => prev.map(s => s.id === editingSnippet.id ? updatedSnippet : s))
       setEditingSnippet(null)
     } catch (error) {
-      toast.error('Failed to update snippet')
+      console.error('Failed to update snippet:', error)
     }
   }
 
+
   const handleDeleteSnippet = (snippetId) => {
     if (window.confirm('Are you sure you want to delete this snippet?')) {
+      try {
         snippetService.deleteSnippet(snippetId)
+        setSnippets(prev => prev.filter(s => s.id !== snippetId))
         setSelectedSnippet(null)
-        toast.success('Snippet deleted successfully!')
       } catch (error) {
-        toast.error('Failed to delete snippet')
+        console.error('Failed to delete snippet:', error)
       }
     }
   }
+
 
   const handleToggleBookmark = (snippetId) => {
     try {
       const snippet = snippets.find(s => s.id === snippetId)
       const updatedSnippet = snippetService.updateSnippet(snippetId, {
+        bookmarked: !snippet.bookmarked,
         updatedAt: new Date().toISOString()
+      })
       setSnippets(prev => prev.map(s => s.id === snippetId ? updatedSnippet : s))
-      toast.success(updatedSnippet.bookmarked ? 'Snippet bookmarked!' : 'Bookmark removed!')
     } catch (error) {
-      toast.error('Failed to update bookmark')
+      console.error('Failed to update bookmark:', error)
     }
+  }
 
   const handleCopySnippet = (code) => {
     navigator.clipboard.writeText(code)
-    toast.success('Code copied to clipboard!')
   }
+
 
   const handleTagToggle = (tag) => {
     setSelectedTags(prev => 
