@@ -1,6 +1,4 @@
 import { Routes, Route } from 'react-router-dom'
-import { ToastContainer } from 'react-toastify'
-import 'react-toastify/dist/ReactToastify.css'
 import Home from './pages/Home'
 import NotFound from './pages/NotFound'
 import Courses from './pages/Courses'
@@ -20,20 +18,6 @@ function App() {
         <Route path="/quiz" element={<Quiz />} />
 
         <Route path="/snippets" element={<SnippetLibrary />} />
-      </Routes>
-      
-      <ToastContainer
-        position="top-right"
-        autoClose={3000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="light"
-        className="mt-16"
         toastClassName="rounded-xl shadow-card"
       />
     </div>
