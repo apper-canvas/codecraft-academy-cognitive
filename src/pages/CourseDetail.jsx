@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { toast } from 'react-toastify'
 import VideoPlayer from '../components/VideoPlayer'
 import ApperIcon from '../components/ApperIcon'
 import RatingSystem from '../components/RatingSystem'
@@ -124,7 +123,6 @@ const CourseDetail = () => {
 
   useEffect(() => {
     if (!course) {
-      navigate('/courses')
       toast.error('Course not found')
     }
   }, [course, navigate])
@@ -134,18 +132,12 @@ const CourseDetail = () => {
   const handleModuleComplete = (moduleId) => {
     setProgress(prev => ({
       ...prev,
-      [moduleId]: { completed: true, watchedAt: new Date() }
     }))
     toast.success('Module completed!')
     
-    // Auto-advance to next module
-    if (currentModule < course.modules.length - 1) {
-      setTimeout(() => {
-        setCurrentModule(currentModule + 1)
         toast.info('Advanced to next module')
       }, 2000)
     } else {
-      toast.success('Congratulations! Course completed!')
     }
   }
 
