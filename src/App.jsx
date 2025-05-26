@@ -18,8 +18,6 @@ function App() {
         <Route path="/quiz" element={<Quiz />} />
 
         <Route path="/snippets" element={<SnippetLibrary />} />
-        toastClassName="rounded-xl shadow-card"
-      />
     </div>
   )
 }
