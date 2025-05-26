@@ -195,27 +195,20 @@ const MainFeature = () => {
                     className={`flex items-center space-x-2 px-4 py-2 rounded-lg font-medium transition-all duration-300 ${
                       activeLanguage === lang.id
                         ? `bg-gradient-to-r ${lang.color} text-white shadow-card`
+                        : 'bg-surface-200 dark:bg-surface-600 text-surface-700 dark:text-surface-300 hover:bg-surface-300 dark:hover:bg-surface-500'
                     }`}
-                  >
-                    <ApperIcon name={lang.icon} className="h-4 w-4" />
-                    <span className="hidden sm:inline">{lang.name}</span>
-                  </button>
-                ))}
               </div>
-
-              {/* Code Editor */}
-              <div className="relative">
-                <textarea
-                  value={code}
-                  onChange={(e) => setCode(e.target.value)}
-                  className="w-full h-64 sm:h-80 p-4 bg-surface-900 text-green-400 font-mono text-sm resize-none focus:outline-none code-editor"
-                  placeholder="Write your code here..."
-                  spellCheck={false}
-                />
                 <div className="absolute top-2 right-2 flex space-x-2">
                   <button
                     onClick={() => {
                       setCode(currentLanguage.defaultCode)
+                      toast.info("Code reset to default")
+                    }}
+                    className="p-2 bg-surface-700 hover:bg-surface-600 text-surface-300 rounded-lg transition-colors"
+                    title="Reset Code"
+                  >
+                    <ApperIcon name="RotateCcw" className="h-4 w-4" />
+                  </button>
                   <button
                     onClick={handleSaveSnippet}
                     className="p-2 bg-surface-700 hover:bg-surface-600 text-surface-300 rounded-lg transition-colors"
@@ -223,9 +216,7 @@ const MainFeature = () => {
                   >
                     <ApperIcon name="Bookmark" className="h-4 w-4" />
                   </button>
-                      toast.info("Code reset to default")
-                    }}
-                    className="p-2 bg-surface-700 hover:bg-surface-600 text-surface-300 rounded-lg transition-colors"
+                </div>
                     title="Reset Code"
                   >
                     <ApperIcon name="RotateCcw" className="h-4 w-4" />
@@ -345,26 +336,23 @@ const MainFeature = () => {
                               <span className="flex-shrink-0 w-6 h-6 rounded-full border-2 border-current flex items-center justify-center mr-3 text-xs font-bold">
                                 {String.fromCharCode(65 + index)}
                               </span>
-                              {option}
-                            </div>
-                          </motion.button>
-                        ))}
-                      </div>
-                    </div>
-                  </motion.div>
-                ) : (
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    className="text-center space-y-6"
-                  >
-                    <div className="w-20 h-20 bg-gradient-to-br from-primary to-secondary rounded-2xl flex items-center justify-center mx-auto">
-                      <ApperIcon name="Trophy" className="h-10 w-10 text-white" />
-                    </div>
-                    
-                    <div>
-                      <h4 className="text-2xl font-bold text-surface-900 dark:text-surface-100 mb-2">
-                        Quiz Complete!
+                      <motion.button
+                        onClick={resetQuiz}
+                        className="px-6 py-3 bg-gradient-to-r from-primary to-secondary text-white font-medium rounded-xl hover:shadow-soft transition-all duration-300"
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                      >
+                        Take Quiz Again
+                      </motion.button>
+
+        {showSaveModal && (
+          <SaveSnippetModal
+            isOpen={showSaveModal}
+            onClose={() => setShowSaveModal(false)}
+            onSave={handleSnippetSaved}
+            language={activeLanguage}
+          />
+        )}
                       </h4>
                       <p className="text-lg text-surface-600 dark:text-surface-300">
                         You scored {score} out of {quizQuestions.length}
