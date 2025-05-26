@@ -591,5 +591,3 @@ const MainFeature = () => {
 }
 
 export default MainFeature
-
-export default MainFeature
