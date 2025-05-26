@@ -10,6 +10,13 @@ const MainFeature = () => {
   const [activeLanguage, setActiveLanguage] = useState('javascript')
   const [code, setCode] = useState('')
   const [output, setOutput] = useState('')
+  const [showSaveModal, setShowSaveModal] = useState(false)
+  const [currentLevel, setCurrentLevel] = useState('beginner')
+  const [currentQuiz, setCurrentQuiz] = useState(0)
+  const [selectedAnswer, setSelectedAnswer] = useState(null)
+  const [showResults, setShowResults] = useState(false)
+  const [score, setScore] = useState(0)
+  const [hasStartedQuiz, setHasStartedQuiz] = useState(false)
   const [isRunning, setIsRunning] = useState(false)
   const languages = [
     {
@@ -34,6 +41,95 @@ const MainFeature = () => {
       defaultCode: `// Welcome to React!\nimport React from 'react';\n\nfunction Welcome({ name }) {\n  return <h1>Hello, {name}!</h1>;\n}\n\n// This would render: Hello, CodeCraft Academy!\n<Welcome name="CodeCraft Academy" />`
     }
   ]
+
+  const quizLevels = {
+    beginner: {
+      name: 'Beginner',
+      description: 'Basic programming concepts',
+      color: 'from-green-400 to-blue-500',
+      questions: [
+        {
+          question: 'What is a variable in programming?',
+          options: [
+            'A container for storing data',
+            'A type of loop',
+            'A function parameter',
+            'A programming language'
+          ],
+          correct: 0
+        },
+        {
+          question: 'Which symbol is used for assignment in most programming languages?',
+          options: ['==', '=', '===', '!=']
+          correct: 1
+        }
+      ]
+    },
+    intermediate: {
+      name: 'Intermediate',
+      description: 'More advanced programming topics',
+      color: 'from-yellow-400 to-orange-500',
+      questions: [
+        {
+          question: 'What is the purpose of a function?',
+          options: [
+            'To store data',
+            'To create variables',
+            'To group reusable code',
+            'To style elements'
+          ],
+          correct: 2
+        }
+      ]
+    },
+    advanced: {
+      name: 'Advanced',
+      description: 'Expert level concepts',
+      color: 'from-purple-400 to-pink-500',
+      questions: [
+        {
+          question: 'What is closure in JavaScript?',
+          options: [
+            'A way to close files',
+            'A function with access to outer scope',
+            'A type of loop',
+            'A CSS property'
+          ],
+          correct: 1
+        }
+      ]
+    }
+  }
+
+  const handleQuizAnswer = (answerIndex) => {
+    setSelectedAnswer(answerIndex)
+    const isCorrect = answerIndex === currentQuestions[currentQuiz].correct
+    
+    if (isCorrect) {
+      setScore(prev => prev + 1)
+      toast.success('Correct answer!')
+    } else {
+      toast.error('Incorrect answer!')
+    }
+    
+    setTimeout(() => {
+      if (currentQuiz < currentQuestions.length - 1) {
+        setCurrentQuiz(prev => prev + 1)
+        setSelectedAnswer(null)
+      } else {
+        setShowResults(true)
+        setHasStartedQuiz(false)
+        toast.info('Quiz completed!')
+      }
+    }, 1500)
+  }
+
+  const resetQuiz = () => {
+    setCurrentLevel('beginner')
+    setCurrentQuiz(0)
+    setSelectedAnswer(null)
+    setShowResults(false)
+    setScore(0)
 
 
 
@@ -127,18 +223,16 @@ const MainFeature = () => {
             output = output.replace(/\{([^}]+)\}/g, (match, expr) => {
               if (expr.includes('name')) return 'World'
               return expr
-            })
-          }
-          logs.push(output)
-        })
-      }
-      
-      return {
-        success: true,
-        output: logs.length > 0 ? logs.join('\n') + '\n✓ Python code simulated successfully!' : '✓ Python code simulated successfully!',
-        logs
-      }
-    } catch (error) {
+
+  const handleLevelSelect = (level) => {
+    setCurrentLevel(level)
+    setCurrentQuiz(0)
+    setSelectedAnswer(null)
+    setShowResults(false)
+    setScore(0)
+    setHasStartedQuiz(true)
+    toast.info(`Starting ${quizLevels[level].name} level quiz!`)
+  }
       return {
         success: false,
         output: `❌ Error: ${error.message}`,
@@ -192,6 +286,12 @@ const MainFeature = () => {
           case 'javascript':
             result = executeJavaScript(code)
             break
+        <motion.div
+          className="text-center mb-12"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+        
           case 'python':
             result = executePython(code)
             break
