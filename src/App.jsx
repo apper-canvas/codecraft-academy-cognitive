@@ -19,6 +19,7 @@ function App() {
 
         <Route path="/snippets" element={<SnippetLibrary />} />
     </div>
+      </Routes>
   )
 }
 
