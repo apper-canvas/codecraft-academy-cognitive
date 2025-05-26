@@ -403,13 +403,6 @@ const MainFeature = () => {
       }
     }, 800)
   }
-        setOutput('❌ Error: ' + error.message)
-        toast.error("Code execution failed!")
-      } finally {
-        setIsRunning(false)
-      }
-    }, 1500)
-  }
 
   const handleLevelSelect = (level) => {
     setCurrentLevel(level)
@@ -474,6 +467,17 @@ const MainFeature = () => {
       toast.success(`Advancing to ${quizLevels[nextLevelKey].name} level!`)
     }
   }
+
+  const handleLanguageChange = (languageId) => {
+    setActiveLanguage(languageId)
+    const newLanguage = languages.find(lang => lang.id === languageId)
+    if (newLanguage) {
+      setCode(newLanguage.defaultCode)
+      setOutput('')
+      toast.info(`Switched to ${newLanguage.name}!`)
+    }
+  }
+
 
   const currentLanguage = languages.find(lang => lang.id === activeLanguage)
   const currentQuestions = quizLevels[currentLevel].questions
@@ -615,35 +619,6 @@ const MainFeature = () => {
 
                 {output && (
                   <motion.div
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: 'auto' }}
-                    className="mt-4 p-4 bg-surface-900 text-green-400 rounded-lg font-mono text-sm whitespace-pre-wrap"
-                  >
-                    {output}
-                  </motion.div>
-                )}
-              </div>
-            </div>
-          </motion.div>
-
-                {output && (
-                  <motion.div
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: 'auto' }}
-                    className="mt-4 p-4 bg-surface-900 text-surface-100 rounded-lg font-mono text-sm whitespace-pre-wrap max-h-40 overflow-y-auto"
-                  >
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-xs text-surface-400 uppercase tracking-wide">Output:</span>
-                      <button
-                        onClick={() => setOutput('')}
-                        className="text-surface-400 hover:text-surface-200 transition-colors"
-                        title="Clear Output"
-                      >
-                        <ApperIcon name="X" className="h-3 w-3" />
-                      </button>
-                    </div>
-                    <div className={`${output.includes('❌') ? 'text-red-400' : output.includes('✓') ? 'text-green-400' : 'text-surface-100'}`}>
-                      {output}
                     </div>
                   </motion.div>
                 )}
