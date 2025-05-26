@@ -85,6 +85,23 @@ const MainFeature = () => {
           question: "Which CSS property is used to change the text color?",
           options: ["text-color", "font-color", "color", "text-style"],
           correct: 2
+        },
+        {
+          question: "What does CSS stand for?",
+          options: ["Computer Style Sheets", "Cascading Style Sheets", "Creative Style Sheets", "Colorful Style Sheets"],
+          correct: 1
+        },
+        {
+          question: "Which HTML tag is used to create a hyperlink?",
+          options: ["<link>", "<a>", "<href>", "<url>"],
+          correct: 1
+        }
+      ]
+    },
+    intermediate: {
+      name: 'Intermediate',
+      color: 'from-blue-400 to-indigo-600',
+      description: 'Intermediate programming concepts',
       questions: [
         {
           question: "What does the '===' operator do in JavaScript?",
@@ -125,6 +142,23 @@ const MainFeature = () => {
           question: "Which event occurs when the user clicks on an HTML element?",
           options: ["onchange", "onclick", "onmouseclick", "onpress"],
           correct: 1
+        },
+        {
+          question: "What is the purpose of JSON in web development?",
+          options: ["Styling web pages", "Data interchange format", "Creating animations", "Database management"],
+          correct: 1
+        },
+        {
+          question: "Which HTTP method is used to retrieve data?",
+          options: ["POST", "PUT", "GET", "DELETE"],
+          correct: 2
+        }
+      ]
+    },
+    advanced: {
+      name: 'Advanced',
+      color: 'from-red-400 to-purple-600',
+      description: 'Advanced programming concepts',
       questions: [
         {
           question: "What is a closure in JavaScript?",
@@ -175,44 +209,6 @@ const MainFeature = () => {
           question: "What is the space complexity of merge sort?",
           options: ["O(1)", "O(log n)", "O(n)", "O(n log n)"],
           correct: 2
-        }
-      ]
-        {
-          question: "What is the purpose of the 'this' keyword in JavaScript?",
-          options: ["References the current function", "References the global object", "References the current object context", "References the parent object"],
-          correct: 2
-        },
-        {
-          question: "Which method is used to iterate over an array in JavaScript?",
-          options: ["loop()", "forEach()", "iterate()", "cycle()"],
-          correct: 1
-        }
-      ]
-    },
-    advanced: {
-      name: 'Advanced',
-      color: 'from-red-400 to-purple-600',
-      description: 'Advanced programming concepts',
-      questions: [
-        {
-          question: "What is a closure in JavaScript?",
-          options: ["A function that returns another function", "A function that has access to variables in its outer scope", "A function that is immediately invoked", "A function that accepts other functions as parameters"],
-          correct: 1
-        },
-        {
-          question: "Which pattern is commonly used for state management in React?",
-          options: ["Observer Pattern", "Singleton Pattern", "Flux/Redux Pattern", "Factory Pattern"],
-          correct: 2
-        },
-        {
-          question: "What is the time complexity of binary search?",
-          options: ["O(n)", "O(log n)", "O(n²)", "O(1)"],
-          correct: 1
-        },
-        {
-          question: "What is the purpose of debouncing in JavaScript?",
-          options: ["To speed up function execution", "To limit the rate of function execution", "To cache function results", "To handle asynchronous operations"],
-          correct: 1
         }
       ]
     }
