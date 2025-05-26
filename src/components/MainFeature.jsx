@@ -60,8 +60,7 @@ const MainFeature = () => {
         },
         {
           question: 'Which symbol is used for assignment in most programming languages?',
-          options: ['==', '=', '===', '!=']
-          correct: 1
+          options: ['==', '=', '===', '!='],
         }
       ]
     },
@@ -221,24 +220,25 @@ const MainFeature = () => {
             // Simple f-string simulation
             output = content.replace(/f["'](.+)["']/, '$1')
             output = output.replace(/\{([^}]+)\}/g, (match, expr) => {
-              if (expr.includes('name')) return 'World'
-              return expr
-
-  const handleLevelSelect = (level) => {
-    setCurrentLevel(level)
-    setCurrentQuiz(0)
-    setSelectedAnswer(null)
-    setShowResults(false)
-    setScore(0)
-    setHasStartedQuiz(true)
-    toast.info(`Starting ${quizLevels[level].name} level quiz!`)
-  }
+            })
+          }
+          logs.push(output)
+        })
+      }
+      
+      return {
+        success: true,
+        output: logs.length > 0 ? logs.join('\n') : '✓ Python code executed successfully (no output)',
+        logs
+      }
+    } catch (error) {
       return {
         success: false,
         output: `❌ Error: ${error.message}`,
         error: error.message
       }
     }
+  }
   }
   
   const executeReact = (code) => {
@@ -266,15 +266,9 @@ const MainFeature = () => {
         error: error.message
       }
     }
-  }
-
-  const runCode = async () => {
-    if (!code.trim()) {
-      toast.warning('Please write some code before running!')
-      return
-    }
-    
-    setIsRunning(true)
+          case 'python':
+            result = executePython(code)
+            break
     setOutput('')
     
     // Add a small delay for better UX
@@ -295,23 +289,31 @@ const MainFeature = () => {
           case 'python':
             result = executePython(code)
             break
+
+  const handleLevelSelect = (level) => {
+    setCurrentLevel(level)
+    setCurrentQuiz(0)
+    setSelectedAnswer(null)
+    setShowResults(false)
+    setScore(0)
+    setHasStartedQuiz(true)
+    toast.info(`Starting ${quizLevels[level].name} level quiz!`)
+  }
+
+  const resetQuiz = () => {
+    setCurrentLevel('beginner')
+    setCurrentQuiz(0)
+    setSelectedAnswer(null)
+    setShowResults(false)
+    setScore(0)
+    setHasStartedQuiz(false)
+    toast.info("Quiz reset. Select a level to start again!")
+  }
           case 'react':
             result = executeReact(code)
             break
           default:
             result = {
-              success: false,
-              output: '❌ Language not supported for execution',
-              error: 'Unsupported language'
-            }
-        }
-        
-        setOutput(result.output)
-        
-        if (result.success) {
-          toast.success('Code executed successfully!')
-        } else {
-          toast.error('Code execution failed!')
         }
       } catch (error) {
         const errorOutput = `❌ Execution Error: ${error.message}`
