@@ -121,24 +121,23 @@ const CourseDetail = () => {
 
   const course = courseData[id]
 
-  useEffect(() => {
-    if (!course) {
-      toast.error('Course not found')
-    }
-  }, [course, navigate])
 
   if (!course) return null
 
   const handleModuleComplete = (moduleId) => {
     setProgress(prev => ({
       ...prev,
+      [moduleId]: { completed: true }
     }))
-    toast.success('Module completed!')
     
-        toast.info('Advanced to next module')
+    // Auto-advance to next module if available
+    if (currentModule < course.modules.length - 1) {
+      setTimeout(() => {
+        setCurrentModule(prev => prev + 1)
       }, 2000)
-    } else {
     }
+  const handleEnroll = () => {
+    setIsEnrolled(true)
   }
 
   const handleEnroll = () => {
