@@ -651,7 +651,13 @@ const MainFeature = () => {
               <div className="p-6 border-b border-surface-200 dark:border-surface-600">
                 <h3 className="text-xl font-semibold text-surface-900 dark:text-surface-100 mb-2">
                   Interactive Quiz
+                </h3>
+                <p className="text-surface-600 dark:text-surface-300">
+                  Test your knowledge with interactive quizzes
+                </p>
+              </div>
 
+              <div className="p-6">
               <AnimatePresence mode="wait">
                 {!hasStartedQuiz ? (
                   <motion.div
