@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
-import { toast } from 'react-toastify'
 import ApperIcon from '../components/ApperIcon'
 
 // Helper function to get course ratings from localStorage
@@ -138,8 +137,6 @@ const Courses = () => {
     return matchesSearch && matchesDifficulty && matchesLanguage
   })
 
-  const handleEnrollCourse = (course) => {
-    toast.success(`Successfully enrolled in ${course.title}!`)
     navigate(`/course/${course.id}`)
   }
 
