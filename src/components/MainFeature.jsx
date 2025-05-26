@@ -274,13 +274,6 @@ const MainFeature = () => {
                 )}
               </div>
             </div>
-                              <span className="text-sm">{option}</span>
-                            </div>
-                          </motion.button>
-                        ))}
-                      </div>
-                    </div>
-                  </motion.div>
                 ) : (
                   <motion.div
                     initial={{ opacity: 0, scale: 0.9 }}
@@ -319,15 +312,6 @@ const MainFeature = () => {
 
       {showSaveModal && (
         <SaveSnippetModal
-          isOpen={showSaveModal}
-          onClose={() => setShowSaveModal(false)}
-          onSave={handleSnippetSaved}
-          language={activeLanguage}
-        />
-      )}
-    </section>
-          </motion.div>
-
           {/* Quiz Section */}
           <motion.div
             className="space-y-6"
@@ -357,15 +341,78 @@ const MainFeature = () => {
                   >
                     <div className="flex items-center justify-between">
                       <span className="text-sm font-medium text-surface-600 dark:text-surface-300">
-                      </motion.button>
+                        Question {currentQuiz + 1} of {quizQuestions.length}
+                      </span>
+                      <div className="flex space-x-1">
+                        {quizQuestions.map((_, index) => (
+                          <div
+                            key={index}
+                            className={`w-2 h-2 rounded-full ${
+                              index === currentQuiz
+                                ? 'bg-primary'
+                                : index < currentQuiz
+                                ? 'bg-green-500'
+                                : 'bg-surface-300 dark:bg-surface-600'
+                            }`}
+                          />
+                        ))}
+                      </div>
+                    </div>
 
-        {showSaveModal && (
-          <SaveSnippetModal
-            isOpen={showSaveModal}
-            onClose={() => setShowSaveModal(false)}
-            onSave={handleSnippetSaved}
-            language={activeLanguage}
-          />
+                    <div className="space-y-4">
+                      <h4 className="text-lg font-semibold text-surface-900 dark:text-surface-100">
+                        {quizQuestions[currentQuiz].question}
+                      </h4>
+
+                      <div className="space-y-3">
+                        {quizQuestions[currentQuiz].options.map((option, index) => (
+                          <motion.button
+                            key={index}
+                            onClick={() => handleQuizAnswer(index)}
+                            disabled={selectedAnswer !== null}
+                            className={`w-full text-left p-4 rounded-xl border-2 transition-all duration-300 ${
+                              selectedAnswer === null
+                                ? 'border-surface-200 dark:border-surface-600 hover:border-primary hover:bg-primary/5'
+                                : selectedAnswer === index
+                                ? index === quizQuestions[currentQuiz].correct
+                                  ? 'border-green-500 bg-green-50 dark:bg-green-900/20'
+                                  : 'border-red-500 bg-red-50 dark:bg-red-900/20'
+                                : index === quizQuestions[currentQuiz].correct
+                                ? 'border-green-500 bg-green-50 dark:bg-green-900/20'
+                                : 'border-surface-200 dark:border-surface-600 opacity-50'
+                            }`}
+                            whileHover={selectedAnswer === null ? { scale: 1.02 } : {}}
+                            whileTap={selectedAnswer === null ? { scale: 0.98 } : {}}
+                          >
+                            <div className="flex items-center space-x-3">
+                              <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
+                                selectedAnswer === null
+                                  ? 'border-surface-300 dark:border-surface-500'
+                                  : selectedAnswer === index
+                                  ? index === quizQuestions[currentQuiz].correct
+                                    ? 'border-green-500 bg-green-500'
+                                    : 'border-red-500 bg-red-500'
+                                  : index === quizQuestions[currentQuiz].correct
+                                  ? 'border-green-500 bg-green-500'
+                                  : 'border-surface-300 dark:border-surface-500'
+                              }`}>
+                                {selectedAnswer !== null && (
+                                  index === quizQuestions[currentQuiz].correct ? (
+                                    <ApperIcon name="Check" className="h-3 w-3 text-white" />
+                                  ) : selectedAnswer === index ? (
+                                    <ApperIcon name="X" className="h-3 w-3 text-white" />
+                                  ) : null
+                                )}
+                              </div>
+                              <span className="text-sm">{option}</span>
+                            </div>
+                          </motion.button>
+                        ))}
+                      </div>
+                    </div>
+                  </motion.div>
+                ) : (
+                  <motion.div
         )}
                       </h4>
                       <p className="text-lg text-surface-600 dark:text-surface-300">
