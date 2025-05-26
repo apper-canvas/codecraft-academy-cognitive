@@ -619,17 +619,38 @@ const MainFeature = () => {
 
                 {output && (
                   <motion.div
-                    </div>
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3 }}
+                    className="mt-4 p-4 bg-surface-900 text-surface-100 rounded-xl font-mono text-sm overflow-auto max-h-32"
+                  >
+                    <pre className="whitespace-pre-wrap">{output}</pre>
                   </motion.div>
                 )}
-                </h3>
-                {hasStartedQuiz && (
-                  <div className="flex items-center space-x-2 text-sm text-surface-600 dark:text-surface-300">
-                    <ApperIcon name="Target" className="h-4 w-4" />
-                    <span>{quizLevels[currentLevel].name}: {score}/{currentQuestions.length}</span>
-                  </div>
-                )}
+
+                {/* Save Snippet Button */}
+                <motion.button
+                  onClick={handleSaveSnippet}
+                  className="mt-3 w-full flex items-center justify-center space-x-2 py-2 px-4 bg-secondary hover:bg-secondary-dark text-white font-medium rounded-xl transition-all duration-300"
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  <ApperIcon name="Save" className="h-4 w-4" />
+                  <span>Save Snippet</span>
+                </motion.button>
               </div>
+            </div>
+
+            {/* Quiz Section */}
+            <motion.div
+              className="bg-white dark:bg-surface-800 rounded-2xl shadow-card overflow-hidden"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6, delay: 0.4 }}
+            >
+              <div className="p-6 border-b border-surface-200 dark:border-surface-600">
+                <h3 className="text-xl font-semibold text-surface-900 dark:text-surface-100 mb-2">
+                  Interactive Quiz
 
               <AnimatePresence mode="wait">
                 {!hasStartedQuiz ? (
