@@ -60,13 +60,31 @@ const MainFeature = () => {
           question: "What does HTML stand for?",
           options: ["Hyper Text Markup Language", "High Tech Modern Language", "Home Tool Markup Language", "Hyperlink and Text Markup Language"],
           correct: 0
-        }
-      ]
-    },
-    intermediate: {
-      name: 'Intermediate',
-      color: 'from-yellow-400 to-orange-600',
-      description: 'Intermediate programming concepts',
+        },
+        {
+          question: "Which of these is a primitive data type in JavaScript?",
+          options: ["Array", "Object", "String", "Function"],
+          correct: 2
+        },
+        {
+          question: "What symbol is used for single-line comments in JavaScript?",
+          options: ["#", "//", "/*", "--"],
+          correct: 1
+        },
+        {
+          question: "Which operator is used to compare both value and type in JavaScript?",
+          options: ["==", "===", "!=", "="],
+          correct: 1
+        },
+        {
+          question: "What is the correct way to write a for loop in JavaScript?",
+          options: ["for i = 1 to 5", "for (i = 0; i <= 5; i++)", "for i in range(5)", "for (i <= 5; i++)"],
+          correct: 1
+        },
+        {
+          question: "Which CSS property is used to change the text color?",
+          options: ["text-color", "font-color", "color", "text-style"],
+          correct: 2
       questions: [
         {
           question: "What does the '===' operator do in JavaScript?",
@@ -78,6 +96,87 @@ const MainFeature = () => {
           options: ["Django", "React", "Laravel", "Flask"],
           correct: 1
         },
+        {
+          question: "What is the purpose of the 'this' keyword in JavaScript?",
+          options: ["References the current function", "References the global object", "References the current object context", "References the parent object"],
+          correct: 2
+        },
+        {
+          question: "Which method is used to iterate over an array in JavaScript?",
+          options: ["loop()", "forEach()", "iterate()", "cycle()"],
+          correct: 1
+        },
+        {
+          question: "What is the difference between 'let' and 'var' in JavaScript?",
+          options: ["No difference", "let has block scope, var has function scope", "var has block scope, let has function scope", "let is faster than var"],
+          correct: 1
+        },
+        {
+          question: "Which method is used to convert a string to lowercase?",
+          options: ["toLowerCase()", "toLower()", "lowerCase()", "lower()"],
+          correct: 0
+        },
+        {
+          question: "What does DOM stand for?",
+          options: ["Document Object Model", "Data Object Management", "Dynamic Object Model", "Document Oriented Model"],
+          correct: 0
+        },
+        {
+          question: "Which event occurs when the user clicks on an HTML element?",
+          options: ["onchange", "onclick", "onmouseclick", "onpress"],
+          correct: 1
+      questions: [
+        {
+          question: "What is a closure in JavaScript?",
+          options: ["A function that returns another function", "A function that has access to variables in its outer scope", "A function that is immediately invoked", "A function that accepts other functions as parameters"],
+          correct: 1
+        },
+        {
+          question: "Which pattern is commonly used for state management in React?",
+          options: ["Observer Pattern", "Singleton Pattern", "Flux/Redux Pattern", "Factory Pattern"],
+          correct: 2
+        },
+        {
+          question: "What is the time complexity of binary search?",
+          options: ["O(n)", "O(log n)", "O(n²)", "O(1)"],
+          correct: 1
+        },
+        {
+          question: "What is the purpose of debouncing in JavaScript?",
+          options: ["To speed up function execution", "To limit the rate of function execution", "To cache function results", "To handle asynchronous operations"],
+          correct: 1
+        },
+        {
+          question: "What is memoization in programming?",
+          options: ["A debugging technique", "A caching technique to optimize expensive function calls", "A way to handle memory leaks", "A method to compress data"],
+          correct: 1
+        },
+        {
+          question: "Which design pattern ensures a class has only one instance?",
+          options: ["Factory Pattern", "Observer Pattern", "Singleton Pattern", "Strategy Pattern"],
+          correct: 2
+        },
+        {
+          question: "What is the Virtual DOM in React?",
+          options: ["A copy of the real DOM kept in memory", "A faster version of the DOM", "A debugging tool", "A testing framework"],
+          correct: 0
+        },
+        {
+          question: "What is the purpose of code splitting in web applications?",
+          options: ["To organize code better", "To reduce initial bundle size and improve performance", "To enable testing", "To prevent bugs"],
+          correct: 1
+        },
+        {
+          question: "Which testing approach focuses on testing individual units of code?",
+          options: ["Integration testing", "End-to-end testing", "Unit testing", "Performance testing"],
+          correct: 2
+        },
+        {
+          question: "What is the space complexity of merge sort?",
+          options: ["O(1)", "O(log n)", "O(n)", "O(n log n)"],
+          correct: 2
+        }
+      ]
         {
           question: "What is the purpose of the 'this' keyword in JavaScript?",
           options: ["References the current function", "References the global object", "References the current object context", "References the parent object"],
