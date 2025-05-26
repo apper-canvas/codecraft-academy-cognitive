@@ -1,6 +1,5 @@
 import { useState, useEffect, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { toast } from 'react-toastify'
 import { Link } from 'react-router-dom'
 import ApperIcon from '../components/ApperIcon'
 import SaveSnippetModal from '../components/SaveSnippetModal'
@@ -46,7 +45,6 @@ const SnippetLibrary = () => {
       setLoading(true)
       const data = await snippetService.getAllSnippets()
       setSnippets(data)
-    } catch (error) {
       toast.error('Failed to load snippets')
     } finally {
       setLoading(false)
@@ -111,9 +109,7 @@ const SnippetLibrary = () => {
         ...snippetData,
         createdAt: new Date().toISOString()
       })
-      setSnippets(prev => [newSnippet, ...prev])
       setShowCreateModal(false)
-      toast.success('Snippet created successfully!')
     } catch (error) {
       toast.error('Failed to create snippet')
     }
@@ -125,9 +121,7 @@ const SnippetLibrary = () => {
         ...snippetData,
         updatedAt: new Date().toISOString()
       })
-      setSnippets(prev => prev.map(s => s.id === editingSnippet.id ? updatedSnippet : s))
       setEditingSnippet(null)
-      toast.success('Snippet updated successfully!')
     } catch (error) {
       toast.error('Failed to update snippet')
     }
@@ -135,9 +129,7 @@ const SnippetLibrary = () => {
 
   const handleDeleteSnippet = (snippetId) => {
     if (window.confirm('Are you sure you want to delete this snippet?')) {
-      try {
         snippetService.deleteSnippet(snippetId)
-        setSnippets(prev => prev.filter(s => s.id !== snippetId))
         setSelectedSnippet(null)
         toast.success('Snippet deleted successfully!')
       } catch (error) {
@@ -150,15 +142,12 @@ const SnippetLibrary = () => {
     try {
       const snippet = snippets.find(s => s.id === snippetId)
       const updatedSnippet = snippetService.updateSnippet(snippetId, {
-        bookmarked: !snippet.bookmarked,
         updatedAt: new Date().toISOString()
-      })
       setSnippets(prev => prev.map(s => s.id === snippetId ? updatedSnippet : s))
       toast.success(updatedSnippet.bookmarked ? 'Snippet bookmarked!' : 'Bookmark removed!')
     } catch (error) {
       toast.error('Failed to update bookmark')
     }
-  }
 
   const handleCopySnippet = (code) => {
     navigator.clipboard.writeText(code)
