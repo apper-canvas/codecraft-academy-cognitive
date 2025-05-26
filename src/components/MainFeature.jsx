@@ -207,7 +207,28 @@ const MainFeature = () => {
   }
 
   const resetQuiz = () => {
-    setCurrentQuiz(0)
+    setSelectedAnswer(null)
+    setShowResults(false)
+    setScore(0)
+    setHasStartedQuiz(false)
+    toast.info("Quiz reset. Select a level to start again!")
+  }
+
+  const nextLevel = () => {
+    const levels = Object.keys(quizLevels)
+    const currentIndex = levels.indexOf(currentLevel)
+    if (currentIndex < levels.length - 1) {
+      const nextLevelKey = levels[currentIndex + 1]
+      setCurrentLevel(nextLevelKey)
+      setCurrentQuiz(0)
+      setSelectedAnswer(null)
+      setShowResults(false)
+      setScore(0)
+      setHasStartedQuiz(true)
+      toast.success(`Advancing to ${quizLevels[nextLevelKey].name} level!`)
+    }
+  }
+
   const currentLanguage = languages.find(lang => lang.id === activeLanguage)
   const currentQuestions = quizLevels[currentLevel].questions
 
@@ -239,27 +260,88 @@ const MainFeature = () => {
   if (!code) {
     setCode(currentLanguage.defaultCode)
   }
-    setSelectedAnswer(null)
-    setShowResults(false)
-    setScore(0)
-    setHasStartedQuiz(false)
-    toast.info("Quiz reset. Select a level to start again!")
-  }
 
-  const nextLevel = () => {
-    const levels = Object.keys(quizLevels)
-    const currentIndex = levels.indexOf(currentLevel)
-    if (currentIndex < levels.length - 1) {
-      const nextLevelKey = levels[currentIndex + 1]
-      setCurrentLevel(nextLevelKey)
-      setCurrentQuiz(0)
-      setSelectedAnswer(null)
-      setShowResults(false)
-      setScore(0)
-      setHasStartedQuiz(true)
-      toast.success(`Advancing to ${quizLevels[nextLevelKey].name} level!`)
-    }
-  }
+  return (
+    <section className="py-16 px-4 min-h-screen bg-gradient-to-br from-surface-50 via-white to-surface-100 dark:from-surface-900 dark:via-surface-800 dark:to-surface-900">
+      <div className="max-w-7xl mx-auto">
+        {/* Header */}
+        <motion.div
+          className="text-center mb-12"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+        >
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-surface-900 dark:text-surface-100 mb-4">
+            Interactive Learning Experience
+          </h2>
+          <p className="text-lg text-surface-600 dark:text-surface-300 max-w-2xl mx-auto">
+            Practice coding in real-time and test your knowledge with interactive quizzes
+          </p>
+        </motion.div>
+
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 lg:gap-12">
+          {/* Code Editor Section */}
+          <motion.div
+            className="space-y-6"
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+          >
+            <div className="bg-white dark:bg-surface-800 rounded-2xl shadow-card overflow-hidden">
+              {/* Language Selector */}
+              <div className="flex flex-wrap gap-2 p-4 bg-surface-50 dark:bg-surface-700 border-b border-surface-200 dark:border-surface-600">
+                {languages.map((lang) => (
+                  <button
+                    key={lang.id}
+                    onClick={() => handleLanguageChange(lang.id)}
+                    className={`flex items-center space-x-2 px-4 py-2 rounded-lg font-medium transition-all duration-300 ${
+                      activeLanguage === lang.id
+                        ? `bg-gradient-to-r ${lang.color} text-white shadow-card`
+                        : 'bg-surface-200 dark:bg-surface-600 text-surface-700 dark:text-surface-300 hover:bg-surface-300 dark:hover:bg-surface-500'
+                    }`}
+                  >
+                    <ApperIcon name={lang.icon} className="h-4 w-4" />
+                    <span>{lang.name}</span>
+                  </button>
+                ))}
+              </div>
+
+              {/* Code Editor */}
+              <div className="relative">
+                <textarea
+                  value={code}
+                  onChange={(e) => setCode(e.target.value)}
+                  className="w-full h-64 p-4 bg-surface-900 text-surface-100 font-mono text-sm resize-none focus:outline-none code-editor"
+                  placeholder="Write your code here..."
+                />
+                <div className="absolute top-2 right-2 flex space-x-2">
+                  <button
+                    onClick={() => {
+                      setCode(currentLanguage.defaultCode)
+                      toast.info("Code reset to default")
+                    }}
+                    className="p-2 bg-surface-700 hover:bg-surface-600 text-surface-300 rounded-lg transition-colors"
+                    title="Reset Code"
+                  >
+                    <ApperIcon name="RotateCcw" className="h-4 w-4" />
+                  </button>
+                  <button
+                    onClick={handleSaveSnippet}
+                    className="p-2 bg-surface-700 hover:bg-surface-600 text-surface-300 rounded-lg transition-colors"
+                    title="Save Snippet"
+                  >
+                    <ApperIcon name="Bookmark" className="h-4 w-4" />
+                  </button>
+                </div>
+              </div>
+
+              {/* Run Button and Output */}
+              <div className="p-4 border-t border-surface-200 dark:border-surface-600">
+                <motion.button
+                  onClick={runCode}
+                  disabled={isRunning}
+                  className={`w-full flex items-center justify-center space-x-2 py-3 px-6 rounded-xl font-medium transition-all duration-300 ${
+                    isRunning
                       ? 'opacity-50 cursor-not-allowed'
                       : 'hover:shadow-soft transform hover:scale-105'
                   } bg-gradient-to-r ${currentLanguage.color} text-white`}
@@ -372,137 +454,51 @@ const MainFeature = () => {
                     </div>
 
                     <div className="flex flex-col sm:flex-row gap-3 justify-center">
-          className="text-center mb-12"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-        >
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-surface-900 dark:text-surface-100 mb-4">
-            Interactive Learning Experience
-          </h2>
-          <p className="text-lg text-surface-600 dark:text-surface-300 max-w-2xl mx-auto">
-            Practice coding in real-time and test your knowledge with interactive quizzes
-          </p>
-        </motion.div>
-
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 lg:gap-12">
-          {/* Code Editor Section */}
-          <motion.div
-            className="space-y-6"
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-          >
-            <div className="bg-white dark:bg-surface-800 rounded-2xl shadow-card overflow-hidden">
-              {/* Language Selector */}
-              <div className="flex flex-wrap gap-2 p-4 bg-surface-50 dark:bg-surface-700 border-b border-surface-200 dark:border-surface-600">
-                {languages.map((lang) => (
-                  <button
-                    key={lang.id}
-                    onClick={() => handleLanguageChange(lang.id)}
-                    className={`flex items-center space-x-2 px-4 py-2 rounded-lg font-medium transition-all duration-300 ${
-                      activeLanguage === lang.id
-                        ? `bg-gradient-to-r ${lang.color} text-white shadow-card`
-                        : 'bg-surface-200 dark:bg-surface-600 text-surface-700 dark:text-surface-300 hover:bg-surface-300 dark:hover:bg-surface-500'
-                    }`}
-                  >
-                    <ApperIcon name={lang.icon} className="h-4 w-4" />
-                    <span>{lang.name}</span>
-                  </button>
-                ))}
-              </div>
-
-              {/* Code Editor */}
-              <div className="relative">
-                <textarea
-                  value={code}
-                  onChange={(e) => setCode(e.target.value)}
-                  className="w-full h-64 p-4 bg-surface-900 text-surface-100 font-mono text-sm resize-none focus:outline-none code-editor"
-                  placeholder="Write your code here..."
-                />
-                <div className="absolute top-2 right-2 flex space-x-2">
-                  <button
-                    onClick={() => {
-                      setCode(currentLanguage.defaultCode)
-                      toast.info("Code reset to default")
-                    }}
-                    className="p-2 bg-surface-700 hover:bg-surface-600 text-surface-300 rounded-lg transition-colors"
-                    title="Reset Code"
-                  >
-                    <ApperIcon name="RotateCcw" className="h-4 w-4" />
-                  </button>
-                  <button
-                    onClick={handleSaveSnippet}
-                    className="p-2 bg-surface-700 hover:bg-surface-600 text-surface-300 rounded-lg transition-colors"
-                    title="Save Snippet"
-                  >
-                    <ApperIcon name="Bookmark" className="h-4 w-4" />
-                  </button>
-                </div>
-              </div>
-
-              {/* Run Button and Output */}
-              <div className="p-4 border-t border-surface-200 dark:border-surface-600">
-                <motion.button
-                  onClick={runCode}
-                  disabled={isRunning}
-                  className={`w-full flex items-center justify-center space-x-2 py-3 px-6 rounded-xl font-medium transition-all duration-300 ${
-                    isRunning
-                <div className="flex items-center justify-between mb-6">
-                  <h3 className="text-xl font-bold text-surface-900 dark:text-surface-100">
-                    Coding Quiz
-                  </h3>
-                  {hasStartedQuiz && (
-                    <div className="flex items-center space-x-2 text-sm text-surface-600 dark:text-surface-300">
-                      <ApperIcon name="Target" className="h-4 w-4" />
-                      <span>{quizLevels[currentLevel].name}: {score}/{currentQuestions.length}</span>
-                    </div>
-                  )}
-                </div>
-              <AnimatePresence mode="wait">
-                {!hasStartedQuiz ? (
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -20 }}
-                    className="space-y-6"
-                  >
-                    <div className="text-center mb-6">
-                      <h4 className="text-lg font-semibold text-surface-900 dark:text-surface-100 mb-2">
-                        Choose Your Level
-                      </h4>
-                      <p className="text-surface-600 dark:text-surface-300">
-                        Select a difficulty level to start the quiz
-                      </p>
-                    </div>
-                    
-                    <div className="grid gap-4">
-                      {Object.entries(quizLevels).map(([levelKey, level]) => (
+                      <motion.button
+                        onClick={resetQuiz}
+                        className="px-6 py-3 bg-surface-600 hover:bg-surface-700 text-white font-medium rounded-xl transition-all duration-300"
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                      >
+                        Choose New Level
+                      </motion.button>
+                      
+                      {currentLevel !== 'advanced' && score / currentQuestions.length >= 0.6 && (
                         <motion.button
-                          key={levelKey}
-                          onClick={() => handleLevelSelect(levelKey)}
-                          className={`p-4 rounded-xl border-2 border-surface-200 dark:border-surface-600 hover:border-primary transition-all duration-300 text-left group`}
-                          whileHover={{ scale: 1.02 }}
-                          whileTap={{ scale: 0.98 }}
+                          onClick={nextLevel}
+                          className={`px-6 py-3 bg-gradient-to-r ${quizLevels[Object.keys(quizLevels)[Object.keys(quizLevels).indexOf(currentLevel) + 1]]?.color || 'from-primary to-secondary'} text-white font-medium rounded-xl hover:shadow-soft transition-all duration-300`}
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
                         >
-                          <div className="flex items-center justify-between">
-                            <div>
-                              <h5 className={`font-semibold bg-gradient-to-r ${level.color} bg-clip-text text-transparent`}>
-                                {level.name}
-                              </h5>
-                              <p className="text-sm text-surface-600 dark:text-surface-300 mt-1">
-                                {level.description}
-                              </p>
-                              <p className="text-xs text-surface-500 dark:text-surface-400 mt-1">
-                                {level.questions.length} questions
-                              </p>
-                            </div>
-                            <div className={`w-3 h-3 rounded-full bg-gradient-to-r ${level.color} opacity-60 group-hover:opacity-100 transition-opacity`}></div>
-                          </div>
+                          Next Level
                         </motion.button>
-                      ))}
+                      )}
+                      
+                      <motion.button
+                        onClick={() => {
+                          setCurrentQuiz(0)
+                          setSelectedAnswer(null)
+                          setShowResults(false)
+                          setScore(0)
+                          setHasStartedQuiz(true)
+                          toast.info(`Retrying ${quizLevels[currentLevel].name} level!`)
+                        }}
+                        className={`px-6 py-3 bg-gradient-to-r ${quizLevels[currentLevel].color} text-white font-medium rounded-xl hover:shadow-soft transition-all duration-300`}
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                      >
+                        Retry Level
+                      </motion.button>
                     </div>
                   </motion.div>
+                ) : (
+                  <motion.div
+                    key={currentQuiz}
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -20 }}
+                    className="space-y-6"
+                  >
                     <div className="flex items-center justify-between">
                       <span className="text-sm font-medium text-surface-600 dark:text-surface-300">
                         {quizLevels[currentLevel].name} - Question {currentQuiz + 1} of {currentQuestions.length}
@@ -522,124 +518,26 @@ const MainFeature = () => {
                         ))}
                       </div>
                     </div>
-                      <span>Running...</span>
+
+                    <div className="space-y-4">
                       <h4 className="text-lg font-semibold text-surface-900 dark:text-surface-100">
                         {currentQuestions[currentQuiz].question}
                       </h4>
-                      <span>Run Code</span>
-                    </>
-                  )}
-                        {currentQuestions[currentQuiz].options.map((option, index) => (
 
-                {output && (
-                  <motion.div
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: 'auto' }}
-                    className="mt-4 p-4 bg-surface-900 text-green-400 rounded-lg font-mono text-sm whitespace-pre-wrap"
-                  >
-                    {output}
+                      <div className="space-y-3">
+                        {currentQuestions[currentQuiz].options.map((option, index) => (
+                          <motion.button
+                            key={index}
+                            onClick={() => handleQuizAnswer(index)}
+                            disabled={selectedAnswer !== null}
+                            className={`w-full p-4 text-left rounded-xl border-2 transition-all duration-300 ${
+                              selectedAnswer === null
+                                ? 'border-surface-200 dark:border-surface-600 hover:border-primary hover:bg-surface-50 dark:hover:bg-surface-700'
+                                : selectedAnswer === index
                                 ? index === currentQuestions[currentQuiz].correct
                                   ? 'border-green-500 bg-green-50 dark:bg-green-900/20'
                                   : 'border-red-500 bg-red-50 dark:bg-red-900/20'
                                 : index === currentQuestions[currentQuiz].correct
-          </motion.div>
-
-          {/* Quiz Section */}
-          <motion.div
-            className="space-y-6"
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, delay: 0.4 }}
-          >
-            <div className="bg-white dark:bg-surface-800 rounded-2xl shadow-card p-6">
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="text-xl font-bold text-surface-900 dark:text-surface-100">
-                  Quick Quiz
-                                  ? index === currentQuestions[currentQuiz].correct
-                                    ? 'border-green-500 bg-green-500'
-                                    : 'border-red-500 bg-red-500'
-                                  : index === currentQuestions[currentQuiz].correct
-                </div>
-              </div>
-
-              <AnimatePresence mode="wait">
-                                  index === currentQuestions[currentQuiz].correct ? (
-                                    <ApperIcon name="Check" className="h-3 w-3 text-white" />
-                    key={currentQuiz}
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -20 }}
-                    className="space-y-6"
-                  >
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm font-medium text-surface-600 dark:text-surface-300">
-                        Question {currentQuiz + 1} of {quizQuestions.length}
-                      </span>
-                      <div className="flex space-x-1">
-                        {quizQuestions.map((_, index) => (
-                          <div
-                            key={index}
-                            className={`w-2 h-2 rounded-full ${
-                              index === currentQuiz
-                                ? 'bg-primary'
-                    <div className="text-center space-y-6">
-                      <div className="p-6 bg-surface-50 dark:bg-surface-700 rounded-xl">
-                        <div className={`inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-r ${quizLevels[currentLevel].color} mb-4`}>
-                          <ApperIcon name="Trophy" className="h-8 w-8 text-white" />
-                          />
-                        ))}
-                        <h4 className="text-2xl font-bold text-surface-900 dark:text-surface-100 mb-2">
-                          {quizLevels[currentLevel].name} Complete!
-
-                    <div className="space-y-4">
-                          You scored {score} out of {currentQuestions.length}
-                        {quizQuestions[currentQuiz].question}
-                      </h4>
-                          <div className={`text-3xl font-bold bg-gradient-to-r ${quizLevels[currentLevel].color} bg-clip-text text-transparent`}>
-                            {Math.round((score / currentQuestions.length) * 100)}%
-                          </div>
-                          <motion.button
-                            key={index}
-                            onClick={() => handleQuizAnswer(index)}
-                      <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                        <motion.button
-                          onClick={resetQuiz}
-                          className="px-6 py-3 bg-surface-600 hover:bg-surface-700 text-white font-medium rounded-xl transition-all duration-300"
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                        >
-                          Choose New Level
-                        </motion.button>
-                        
-                        {currentLevel !== 'advanced' && score / currentQuestions.length >= 0.6 && (
-                          <motion.button
-                            onClick={nextLevel}
-                            className={`px-6 py-3 bg-gradient-to-r ${quizLevels[Object.keys(quizLevels)[Object.keys(quizLevels).indexOf(currentLevel) + 1]]?.color || 'from-primary to-secondary'} text-white font-medium rounded-xl hover:shadow-soft transition-all duration-300`}
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                          >
-                            Next Level
-                          </motion.button>
-                        )}
-                        
-                        <motion.button
-                          onClick={() => {
-                            setCurrentQuiz(0)
-                            setSelectedAnswer(null)
-                            setShowResults(false)
-                            setScore(0)
-                            setHasStartedQuiz(true)
-                            toast.info(`Retrying ${quizLevels[currentLevel].name} level!`)
-                          }}
-                          className={`px-6 py-3 bg-gradient-to-r ${quizLevels[currentLevel].color} text-white font-medium rounded-xl hover:shadow-soft transition-all duration-300`}
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                        >
-                          Retry Level
-                        </motion.button>
-                      </div>
-                                  : 'border-red-500 bg-red-50 dark:bg-red-900/20'
-                                : index === quizQuestions[currentQuiz].correct
                                 ? 'border-green-500 bg-green-50 dark:bg-green-900/20'
                                 : 'border-surface-200 dark:border-surface-600 opacity-50'
                             }`}
@@ -651,15 +549,15 @@ const MainFeature = () => {
                                 selectedAnswer === null
                                   ? 'border-surface-300 dark:border-surface-500'
                                   : selectedAnswer === index
-                                  ? index === quizQuestions[currentQuiz].correct
+                                  ? index === currentQuestions[currentQuiz].correct
                                     ? 'border-green-500 bg-green-500'
                                     : 'border-red-500 bg-red-500'
-                                  : index === quizQuestions[currentQuiz].correct
+                                  : index === currentQuestions[currentQuiz].correct
                                   ? 'border-green-500 bg-green-500'
                                   : 'border-surface-300 dark:border-surface-500'
                               }`}>
                                 {selectedAnswer !== null && (
-                                  index === quizQuestions[currentQuiz].correct ? (
+                                  index === currentQuestions[currentQuiz].correct ? (
                                     <ApperIcon name="Check" className="h-3 w-3 text-white" />
                                   ) : selectedAnswer === index ? (
                                     <ApperIcon name="X" className="h-3 w-3 text-white" />
@@ -672,35 +570,6 @@ const MainFeature = () => {
                         ))}
                       </div>
                     </div>
-                  </motion.div>
-                ) : (
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    className="text-center space-y-4"
-                  >
-                    <div className="p-6 bg-surface-50 dark:bg-surface-700 rounded-xl">
-                      <h4 className="text-2xl font-bold text-surface-900 dark:text-surface-100 mb-2">
-                        Quiz Complete!
-                      </h4>
-                      <p className="text-lg text-surface-600 dark:text-surface-300">
-                        You scored {score} out of {quizQuestions.length}
-                      </p>
-                      <div className="mt-4">
-                        <div className="text-3xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-                          {Math.round((score / quizQuestions.length) * 100)}%
-                        </div>
-                      </div>
-                    </div>
-
-                    <motion.button
-                      onClick={resetQuiz}
-                      className="px-6 py-3 bg-gradient-to-r from-primary to-secondary text-white font-medium rounded-xl hover:shadow-soft transition-all duration-300"
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                    >
-                      Take Quiz Again
-                    </motion.button>
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -720,5 +589,7 @@ const MainFeature = () => {
     </section>
   )
 }
+
+export default MainFeature
 
 export default MainFeature
