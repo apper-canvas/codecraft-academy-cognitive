@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from 'framer-motion'
-import { useState, useCallback, useRef } from 'react'
+import { useState, useCallback } from 'react'
 import { toast } from 'react-toastify'
 import { snippetService } from '../services/snippetService'
 import SaveSnippetModal from './SaveSnippetModal'
@@ -11,13 +11,8 @@ const MainFeature = () => {
   const [code, setCode] = useState('')
   const [output, setOutput] = useState('')
   const [showSaveModal, setShowSaveModal] = useState(false)
-  const [currentLevel, setCurrentLevel] = useState('beginner')
-  const [currentQuiz, setCurrentQuiz] = useState(0)
-  const [selectedAnswer, setSelectedAnswer] = useState(null)
-  const [showResults, setShowResults] = useState(false)
-  const [score, setScore] = useState(0)
-  const [hasStartedQuiz, setHasStartedQuiz] = useState(false)
   const [isRunning, setIsRunning] = useState(false)
+
   const languages = [
     {
       id: 'javascript',
@@ -41,96 +36,6 @@ const MainFeature = () => {
       defaultCode: `// Welcome to React!\nimport React from 'react';\n\nfunction Welcome({ name }) {\n  return <h1>Hello, {name}!</h1>;\n}\n\n// This would render: Hello, CodeCraft Academy!\n<Welcome name="CodeCraft Academy" />`
     }
   ]
-
-  const quizLevels = {
-    beginner: {
-      name: 'Beginner',
-      description: 'Basic programming concepts',
-      color: 'from-green-400 to-blue-500',
-      questions: [
-        {
-          question: 'What is a variable in programming?',
-          options: [
-            'A container for storing data',
-            'A type of loop',
-            'A function parameter',
-            'A programming language'
-          ],
-          correct: 0
-        },
-        {
-          question: 'Which symbol is used for assignment in most programming languages?',
-          options: ['==', '=', '===', '!='],
-        }
-      ]
-    },
-    intermediate: {
-      name: 'Intermediate',
-      description: 'More advanced programming topics',
-      color: 'from-yellow-400 to-orange-500',
-      questions: [
-        {
-          question: 'What is the purpose of a function?',
-          options: [
-            'To store data',
-            'To create variables',
-            'To group reusable code',
-            'To style elements'
-          ],
-          correct: 2
-        }
-      ]
-    },
-    advanced: {
-      name: 'Advanced',
-      description: 'Expert level concepts',
-      color: 'from-purple-400 to-pink-500',
-      questions: [
-        {
-          question: 'What is closure in JavaScript?',
-          options: [
-            'A way to close files',
-            'A function with access to outer scope',
-            'A type of loop',
-            'A CSS property'
-          ],
-          correct: 1
-        }
-      ]
-    }
-  }
-
-  const handleQuizAnswer = (answerIndex) => {
-    setSelectedAnswer(answerIndex)
-    const isCorrect = answerIndex === currentQuestions[currentQuiz].correct
-    
-    if (isCorrect) {
-      setScore(prev => prev + 1)
-      toast.success('Correct answer!')
-    } else {
-      toast.error('Incorrect answer!')
-    }
-    
-    setTimeout(() => {
-      if (currentQuiz < currentQuestions.length - 1) {
-        setCurrentQuiz(prev => prev + 1)
-        setSelectedAnswer(null)
-      } else {
-        setShowResults(true)
-        setHasStartedQuiz(false)
-        toast.info('Quiz completed!')
-      }
-    }, 1500)
-  }
-
-  const resetQuiz = () => {
-    setCurrentLevel('beginner')
-    setCurrentQuiz(0)
-    setSelectedAnswer(null)
-    setShowResults(false)
-    setScore(0)
-
-
 
   // Real-time code execution with output capture
   const executeJavaScript = (code) => {
@@ -220,6 +125,7 @@ const MainFeature = () => {
             // Simple f-string simulation
             output = content.replace(/f["'](.+)["']/, '$1')
             output = output.replace(/\{([^}]+)\}/g, (match, expr) => {
+              return `[${expr}]` // Simple placeholder for variable interpolation
             })
           }
           logs.push(output)
@@ -238,7 +144,6 @@ const MainFeature = () => {
         error: error.message
       }
     }
-  }
   }
   
   const executeReact = (code) => {
@@ -266,9 +171,15 @@ const MainFeature = () => {
         error: error.message
       }
     }
-          case 'python':
-            result = executePython(code)
-            break
+  }
+
+  const runCode = () => {
+    if (!code.trim()) {
+      toast.error('Please write some code first!')
+      return
+    }
+    
+    setIsRunning(true)
     setOutput('')
     
     // Add a small delay for better UX
@@ -280,40 +191,25 @@ const MainFeature = () => {
           case 'javascript':
             result = executeJavaScript(code)
             break
-        <motion.div
-          className="text-center mb-12"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-        
           case 'python':
             result = executePython(code)
             break
-
-  const handleLevelSelect = (level) => {
-    setCurrentLevel(level)
-    setCurrentQuiz(0)
-    setSelectedAnswer(null)
-    setShowResults(false)
-    setScore(0)
-    setHasStartedQuiz(true)
-    toast.info(`Starting ${quizLevels[level].name} level quiz!`)
-  }
-
-  const resetQuiz = () => {
-    setCurrentLevel('beginner')
-    setCurrentQuiz(0)
-    setSelectedAnswer(null)
-    setShowResults(false)
-    setScore(0)
-    setHasStartedQuiz(false)
-    toast.info("Quiz reset. Select a level to start again!")
-  }
           case 'react':
             result = executeReact(code)
             break
           default:
             result = {
+              success: false,
+              output: 'Language not supported for execution'
+            }
+        }
+        
+        setOutput(result.output)
+        
+        if (result.success) {
+          toast.success('Code executed successfully!')
+        } else {
+          toast.error('Code execution failed!')
         }
       } catch (error) {
         const errorOutput = `❌ Execution Error: ${error.message}`
@@ -323,34 +219,6 @@ const MainFeature = () => {
         setIsRunning(false)
       }
     }, 800)
-  }
-
-  const handleLevelSelect = (level) => {
-    setCurrentLevel(level)
-    setCurrentQuiz(0)
-    setSelectedAnswer(null)
-    setShowResults(false)
-    setScore(0)
-    setHasStartedQuiz(true)
-    toast.info(`Starting ${quizLevels[level].name} level quiz!`)
-  }
-    setHasStartedQuiz(false)
-    toast.info("Quiz reset. Select a level to start again!")
-  }
-
-  const nextLevel = () => {
-    const levels = Object.keys(quizLevels)
-    const currentIndex = levels.indexOf(currentLevel)
-    if (currentIndex < levels.length - 1) {
-      const nextLevelKey = levels[currentIndex + 1]
-      setCurrentLevel(nextLevelKey)
-      setCurrentQuiz(0)
-      setSelectedAnswer(null)
-      setShowResults(false)
-      setScore(0)
-      setHasStartedQuiz(true)
-      toast.success(`Advancing to ${quizLevels[nextLevelKey].name} level!`)
-    }
   }
 
   const handleLanguageChange = (languageId) => {
@@ -363,9 +231,7 @@ const MainFeature = () => {
     }
   }
 
-
   const currentLanguage = languages.find(lang => lang.id === activeLanguage)
-  const currentQuestions = quizLevels[currentLevel].questions
 
   const handleSaveSnippet = useCallback(() => {
     if (!code.trim()) {
@@ -399,16 +265,21 @@ const MainFeature = () => {
   return (
     <section className="py-16 px-4 min-h-screen bg-gradient-to-br from-surface-50 via-white to-surface-100 dark:from-surface-900 dark:via-surface-800 dark:to-surface-900">
       <div className="max-w-7xl mx-auto">
+        <motion.div
+          className="text-center mb-12"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
         >
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-surface-900 dark:text-surface-100 mb-4">
             Interactive Learning Experience
           </h2>
           <p className="text-lg text-surface-600 dark:text-surface-300 max-w-2xl mx-auto">
-            Practice coding in real-time and test your knowledge with interactive quizzes
+            Practice coding in real-time with our interactive code editor
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 lg:gap-12">
+        <div className="grid grid-cols-1 lg:grid-cols-1 gap-8 lg:gap-12">
           {/* Code Editor Section */}
           <motion.div
             className="space-y-6"
@@ -434,6 +305,7 @@ const MainFeature = () => {
                   </button>
                 ))}
               </div>
+              
               {/* Monaco Code Editor */}
               <div className="relative h-80">
                 <Editor
@@ -457,7 +329,6 @@ const MainFeature = () => {
                     roundedSelection: false,
                     readOnly: false,
                     cursorStyle: 'line',
-                    automaticLayout: true,
                     glyphMargin: false,
                     folding: true,
                     lineDecorationsWidth: 10,
@@ -473,7 +344,7 @@ const MainFeature = () => {
                     </div>
                   }
                 />
-                </div>
+              </div>
 
               {/* Run Button and Output */}
               <div className="p-4 border-t border-surface-200 dark:border-surface-600">
@@ -518,208 +389,6 @@ const MainFeature = () => {
                 </motion.button>
               </div>
             </div>
-
-            {/* Quiz Section */}
-            <motion.div
-              className="bg-white dark:bg-surface-800 rounded-2xl shadow-card overflow-hidden"
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6, delay: 0.4 }}
-            >
-              <div className="p-6 border-b border-surface-200 dark:border-surface-600">
-                <h3 className="text-xl font-semibold text-surface-900 dark:text-surface-100 mb-2">
-                  Interactive Quiz
-                </h3>
-                <p className="text-surface-600 dark:text-surface-300">
-                  Test your knowledge with interactive quizzes
-                </p>
-              </div>
-
-              <div className="p-6">
-              <AnimatePresence mode="wait">
-                {!hasStartedQuiz ? (
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -20 }}
-                    className="space-y-6"
-                  >
-                    <div className="text-center mb-6">
-                      <h4 className="text-lg font-semibold text-surface-900 dark:text-surface-100 mb-2">
-                        Choose Your Level
-                      </h4>
-                      <p className="text-surface-600 dark:text-surface-300">
-                        Select a difficulty level to start the quiz
-                      </p>
-                    </div>
-                    
-                    <div className="grid gap-4">
-                      {Object.entries(quizLevels).map(([levelKey, level]) => (
-                        <motion.button
-                          key={levelKey}
-                          onClick={() => handleLevelSelect(levelKey)}
-                          className={`p-4 rounded-xl border-2 border-surface-200 dark:border-surface-600 hover:border-primary transition-all duration-300 text-left group`}
-                          whileHover={{ scale: 1.02 }}
-                          whileTap={{ scale: 0.98 }}
-                        >
-                          <div className="flex items-center justify-between">
-                            <div>
-                              <h5 className={`font-semibold bg-gradient-to-r ${level.color} bg-clip-text text-transparent`}>
-                                {level.name}
-                              </h5>
-                              <p className="text-sm text-surface-600 dark:text-surface-300 mt-1">
-                                {level.description}
-                              </p>
-                              <p className="text-xs text-surface-500 dark:text-surface-400 mt-1">
-                                {level.questions.length} questions
-                              </p>
-                            </div>
-                      ))}
-                    </div>
-                  </motion.div>
-                ) : showResults ? (
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    className="text-center space-y-6"
-                  >
-                    <div className="p-6 bg-surface-50 dark:bg-surface-700 rounded-xl">
-                      <div className={`inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-r ${quizLevels[currentLevel].color} mb-4`}>
-                        <ApperIcon name="Trophy" className="h-8 w-8 text-white" />
-                      </div>
-                      <h4 className="text-2xl font-bold text-surface-900 dark:text-surface-100 mb-2">
-                        {quizLevels[currentLevel].name} Complete!
-                      </h4>
-                      <p className="text-lg text-surface-600 dark:text-surface-300">
-                        You scored {score} out of {currentQuestions.length}
-                      </p>
-                      <div className={`text-3xl font-bold bg-gradient-to-r ${quizLevels[currentLevel].color} bg-clip-text text-transparent mt-2`}>
-                        {Math.round((score / currentQuestions.length) * 100)}%
-                      </div>
-                    </div>
-
-                    <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                      <motion.button
-                        onClick={resetQuiz}
-                        className="px-6 py-3 bg-surface-600 hover:bg-surface-700 text-white font-medium rounded-xl transition-all duration-300"
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                      >
-                        Choose New Level
-                      </motion.button>
-                      
-                      {currentLevel !== 'advanced' && score / currentQuestions.length >= 0.6 && (
-                        <motion.button
-                          onClick={nextLevel}
-                          className={`px-6 py-3 bg-gradient-to-r ${quizLevels[Object.keys(quizLevels)[Object.keys(quizLevels).indexOf(currentLevel) + 1]]?.color || 'from-primary to-secondary'} text-white font-medium rounded-xl hover:shadow-soft transition-all duration-300`}
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                        >
-                          Next Level
-                        </motion.button>
-                      )}
-                      
-                      <motion.button
-                        onClick={() => {
-                          setCurrentQuiz(0)
-                          setSelectedAnswer(null)
-                          setShowResults(false)
-                          setScore(0)
-                          setHasStartedQuiz(true)
-                          toast.info(`Retrying ${quizLevels[currentLevel].name} level!`)
-                        }}
-                        className={`px-6 py-3 bg-gradient-to-r ${quizLevels[currentLevel].color} text-white font-medium rounded-xl hover:shadow-soft transition-all duration-300`}
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                      >
-                        Retry Level
-                      </motion.button>
-                    </div>
-                  </motion.div>
-                ) : (
-                  <motion.div
-                    key={currentQuiz}
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -20 }}
-                    className="space-y-6"
-                  >
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm font-medium text-surface-600 dark:text-surface-300">
-                        {quizLevels[currentLevel].name} - Question {currentQuiz + 1} of {currentQuestions.length}
-                      </span>
-                      <div className="flex space-x-1">
-                        {currentQuestions.map((_, index) => (
-                          <div
-                            key={index}
-                            className={`w-2 h-2 rounded-full ${
-                              index === currentQuiz
-                                ? 'bg-primary'
-                                : index < currentQuiz
-                                ? 'bg-green-500'
-                                : 'bg-surface-300 dark:bg-surface-600'
-                            }`}
-                          />
-                        ))}
-                      </div>
-                    </div>
-
-                    <div className="space-y-4">
-                      <h4 className="text-lg font-semibold text-surface-900 dark:text-surface-100">
-                        {currentQuestions[currentQuiz].question}
-                      </h4>
-
-                      <div className="space-y-3">
-                        {currentQuestions[currentQuiz].options.map((option, index) => (
-                          <motion.button
-                            key={index}
-                            onClick={() => handleQuizAnswer(index)}
-                            disabled={selectedAnswer !== null}
-                            className={`w-full p-4 text-left rounded-xl border-2 transition-all duration-300 ${
-                              selectedAnswer === null
-                                ? 'border-surface-200 dark:border-surface-600 hover:border-primary hover:bg-surface-50 dark:hover:bg-surface-700'
-                                : selectedAnswer === index
-                                ? index === currentQuestions[currentQuiz].correct
-                                  ? 'border-green-500 bg-green-50 dark:bg-green-900/20'
-                                  : 'border-red-500 bg-red-50 dark:bg-red-900/20'
-                                : index === currentQuestions[currentQuiz].correct
-                                ? 'border-green-500 bg-green-50 dark:bg-green-900/20'
-                                : 'border-surface-200 dark:border-surface-600 opacity-50'
-                            }`}
-                            whileHover={selectedAnswer === null ? { scale: 1.02 } : {}}
-                            whileTap={selectedAnswer === null ? { scale: 0.98 } : {}}
-                          >
-                            <div className="flex items-center space-x-3">
-                              <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
-                                selectedAnswer === null
-                                  ? 'border-surface-300 dark:border-surface-500'
-                                  : selectedAnswer === index
-                                  ? index === currentQuestions[currentQuiz].correct
-                                    ? 'border-green-500 bg-green-500'
-                                    : 'border-red-500 bg-red-500'
-                                  : index === currentQuestions[currentQuiz].correct
-                                  ? 'border-green-500 bg-green-500'
-                                  : 'border-surface-300 dark:border-surface-500'
-                              }`}>
-                                {selectedAnswer !== null && (
-                                  index === currentQuestions[currentQuiz].correct ? (
-                                    <ApperIcon name="Check" className="h-3 w-3 text-white" />
-                                  ) : selectedAnswer === index ? (
-                                    <ApperIcon name="X" className="h-3 w-3 text-white" />
-                                  ) : null
-                                )}
-                              </div>
-                              <span className="text-sm">{option}</span>
-                            </div>
-                          </motion.button>
-                        ))}
-                      </div>
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
-          </motion.div>
           </motion.div>
         </div>
       </div>
@@ -735,3 +404,5 @@ const MainFeature = () => {
     </section>
   )
 }
+
+export default MainFeature
