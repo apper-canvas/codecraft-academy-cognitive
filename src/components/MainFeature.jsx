@@ -231,6 +231,7 @@ const MainFeature = () => {
                     <ApperIcon name="Bookmark" className="h-4 w-4" />
                   </button>
                 </div>
+              </div>
 
               {/* Run Button and Output */}
               <div className="p-4 border-t border-surface-200 dark:border-surface-600">
@@ -274,44 +275,8 @@ const MainFeature = () => {
                 )}
               </div>
             </div>
-                ) : (
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    className="text-center space-y-4"
-                  >
-                    <div className="p-6 bg-surface-50 dark:bg-surface-700 rounded-xl">
-                      <h4 className="text-2xl font-bold text-surface-900 dark:text-surface-100 mb-2">
-                        Quiz Complete!
-                      </h4>
-                      <p className="text-lg text-surface-600 dark:text-surface-300">
-                        You scored {score} out of {quizQuestions.length}
-                      </p>
-                      <div className="mt-4">
-                        <div className="text-3xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-                          {Math.round((score / quizQuestions.length) * 100)}%
-                        </div>
-                      </div>
-                    </div>
-
-                    <motion.button
-                      onClick={resetQuiz}
-                      className="px-6 py-3 bg-gradient-to-r from-primary to-secondary text-white font-medium rounded-xl hover:shadow-soft transition-all duration-300"
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                    >
-                      Take Quiz Again
-                    </motion.button>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
           </motion.div>
-        </div>
-      </div>
 
-      {showSaveModal && (
-        <SaveSnippetModal
           {/* Quiz Section */}
           <motion.div
             className="space-y-6"
@@ -413,7 +378,13 @@ const MainFeature = () => {
                   </motion.div>
                 ) : (
                   <motion.div
-        )}
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="text-center space-y-4"
+                  >
+                    <div className="p-6 bg-surface-50 dark:bg-surface-700 rounded-xl">
+                      <h4 className="text-2xl font-bold text-surface-900 dark:text-surface-100 mb-2">
+                        Quiz Complete!
                       </h4>
                       <p className="text-lg text-surface-600 dark:text-surface-300">
                         You scored {score} out of {quizQuestions.length}
@@ -432,19 +403,28 @@ const MainFeature = () => {
                       whileTap={{ scale: 0.95 }}
                     >
                       Take Quiz Again
-
-        {showSaveModal && (
-          <SaveSnippetModal
-            isOpen={showSaveModal}
-            onClose={() => setShowSaveModal(false)}
-            onSave={handleSnippetSaved}
-            language={activeLanguage}
-          />
-        )}
                     </motion.button>
                   </motion.div>
                 )}
               </AnimatePresence>
+            </div>
+          </motion.div>
+        </div>
+      </div>
+
+      {showSaveModal && (
+        <SaveSnippetModal
+          isOpen={showSaveModal}
+          onClose={() => setShowSaveModal(false)}
+          onSave={handleSnippetSaved}
+          language={activeLanguage}
+        />
+      )}
+    </section>
+  )
+}
+
+export default MainFeature
             </div>
           </motion.div>
         </div>
