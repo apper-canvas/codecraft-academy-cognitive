@@ -135,10 +135,9 @@ const CourseDetail = () => {
       setTimeout(() => {
         setCurrentModule(prev => prev + 1)
       }, 2000)
-    }
-  const handleEnroll = () => {
-    setIsEnrolled(true)
   }
+
+    }
 
   const handleEnroll = () => {
     setIsEnrolled(true)
