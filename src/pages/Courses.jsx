@@ -137,8 +137,6 @@ const Courses = () => {
     return matchesSearch && matchesDifficulty && matchesLanguage
   })
 
-    navigate(`/course/${course.id}`)
-  }
 
   const handleViewCourse = (course) => {
     navigate(`/course/${course.id}`)
