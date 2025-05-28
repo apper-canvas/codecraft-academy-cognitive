@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { toast } from 'react-toastify'
 import ApperIcon from './ApperIcon'
 
 const RatingSystem = ({ courseId, courseName, showSubmissionForm = true, compact = false }) => {
@@ -57,14 +56,14 @@ const RatingSystem = ({ courseId, courseName, showSubmissionForm = true, compact
     e.preventDefault()
     
     if (userRating === 0) {
-      toast.error('Please select a rating')
       return
     }
+
     
     if (userReview.trim().length < 10) {
-      toast.error('Please write a review with at least 10 characters')
       return
     }
+
 
     const newReview = {
       id: Date.now(),
@@ -85,12 +84,9 @@ const RatingSystem = ({ courseId, courseName, showSubmissionForm = true, compact
           ? { ...newReview, id: review.id, helpful: review.helpful }
           : review
       ))
-      toast.success('Your review has been updated!')
     } else {
       // Add new review
       setReviews(prev => [newReview, ...prev])
-      setHasUserReviewed(true)
-      toast.success('Thank you for your review!')
     }
     
     setShowReviewForm(false)
@@ -102,7 +98,6 @@ const RatingSystem = ({ courseId, courseName, showSubmissionForm = true, compact
     setUserRating(0)
     setUserReview('')
     setShowReviewForm(false)
-    toast.success('Your review has been deleted')
   }
 
   const handleHelpfulClick = (reviewId) => {
@@ -111,7 +106,6 @@ const RatingSystem = ({ courseId, courseName, showSubmissionForm = true, compact
         ? { ...review, helpful: review.helpful + 1 }
         : review
     ))
-    toast.success('Thanks for your feedback!')
   }
 
   const filteredAndSortedReviews = () => {
