@@ -192,8 +192,9 @@ const Quiz = () => {
     setSelectedAnswer(null)
     setShowResults(false)
     setScore(0)
-    toast.info(`Starting ${quizLevels[level].name} level quiz!`)
+    setHasStartedQuiz(true)
   }
+
 
   const handleQuizAnswer = (answerIndex) => {
     setSelectedAnswer(answerIndex)
@@ -201,23 +202,27 @@ const Quiz = () => {
     const isCorrect = answerIndex === currentQuestions[currentQuiz].correct
     
     if (isCorrect) {
+      setScore(score + 1)
     }
 
     setTimeout(() => {
       if (currentQuiz < currentQuestions.length - 1) {
         setCurrentQuiz(currentQuiz + 1)
         setSelectedAnswer(null)
-        }
+      } else {
+        setShowResults(true)
+        setHasStartedQuiz(false)
       }
     }, 1500)
   }
+
 
   const resetQuiz = () => {
     setShowResults(false)
     setScore(0)
     setHasStartedQuiz(false)
-    toast.info("Quiz reset. Select a level to start again!")
   }
+
 
   const nextLevel = () => {
     const levels = Object.keys(quizLevels)
@@ -229,9 +234,9 @@ const Quiz = () => {
       setShowResults(false)
       setScore(0)
       setHasStartedQuiz(true)
-      toast.success(`Advancing to ${quizLevels[nextLevelKey].name} level!`)
     }
   }
+
 
   const currentQuestions = quizLevels[currentLevel].questions
 
@@ -406,8 +411,8 @@ const Quiz = () => {
                           setShowResults(false)
                           setScore(0)
                           setHasStartedQuiz(true)
-                          toast.info(`Retrying ${quizLevels[currentLevel].name} level!`)
                         }}
+
                         className={`px-6 py-3 bg-gradient-to-r ${quizLevels[currentLevel].color} text-white font-medium rounded-xl hover:shadow-soft transition-all duration-300`}
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
